@@ -64,7 +64,9 @@ compile()
 {
   # Skip example documents which purpose is to produce an error
   # (or cannot be compiled for a different reason)
-# [[ $1 == "gitlab"      && $2 == "20xx-xx-xx.tex" ]] && return  # <Enter the reason here>
+  [[ $1 == "misc"          && $2 == "redefine_figure.tex" ]] && return  # Should issue error
+  [[ $1 == "documentclass" && $2 == "amsbook.tex"         ]] && return  # TODO
+  [[ $1 == "documentclass" && $2 == "smfbook.tex"         ]] && return  # TODO
 
   # Compile document three times (so interim files will be used)
   pdflatex "$2" || failed "$1" "$2"
@@ -92,13 +94,13 @@ fi
 compile_all "source"
 
 # Compile all test documents
-#cd test
-#dirs=(*)
-#for dir in "${dirs[@]}"
-#do
-#  compile_all "$dir"
-#done
-#cd ..
+cd test
+dirs=(*)
+for dir in "${dirs[@]}"
+do
+  compile_all "$dir"
+done
+cd ..
 
 # Compile all issue documents
 cd issues

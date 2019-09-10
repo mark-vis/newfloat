@@ -1,0 +1,7 @@
+\documentclass{book}
+\makeatletter
+% Patch \@chapter so Plan B will be executed
+\let\@chapter@ORI\@chapter
+\def\@chapter{\@chapter@ORI}
+\makeatother
+\input{_test}

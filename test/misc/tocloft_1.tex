@@ -1,0 +1,39 @@
+\documentclass[12pt,oneside]{book}
+\usepackage[ngerman]{babel}
+\usepackage[demo]{graphicx}
+\usepackage{tocloft}
+
+\usepackage[figurewithin=none,figurename={Abb.},listfigurename={Verzeichnis 1}]{newfloat}
+
+\newlistof{figureA}{loa}{Verzeichnis 2}
+\DeclareFloatingEnvironment[fileext=loa]{figureA}[Fig.]
+  % Due of a bug in tocloft (\@namedef{ext@#3}{#3} instead of \@namedef{ext@#2}{#3})
+  % the file extension must be repeated at \DeclareFloatingEnvironment, too.
+
+\setlength{\cftfigindent}{0cm}
+\renewcommand{\cftfigpresnum}{Abb. }
+\setlength{\cftfignumwidth}{1.75cm}
+
+\setlength{\cftfigureAindent}{0cm}
+\renewcommand{\cftfigureApresnum}{Fig. }
+\setlength{\cftfigureAnumwidth}{1.75cm}
+
+\renewcommand{\cftdotsep}{\cftnodots}
+
+\begin{document}
+
+\begin{figure}[!ht]
+\centering\includegraphics{bild1}\caption{Bild f"ur Verzeichnis 1}
+\end{figure}
+
+\begin{figureA}[!ht]
+\centering\includegraphics{bild1}\caption{Bild f"ur Verzeichnis 2}
+\end{figureA}
+
+\newpage
+\listoffigures
+
+\newpage
+\listoffigureA
+
+\end{document}

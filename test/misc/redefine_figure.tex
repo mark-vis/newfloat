@@ -1,0 +1,25 @@
+\documentclass{article}
+
+\usepackage[demo]{graphicx}% 'demo' option only to not require actually images for this example file
+\usepackage{capt-of}% or 'caption'
+\usepackage{chemscheme}
+
+% Should that work!?
+\usepackage{newfloat}
+\DeclareFloatingEnvironment{figure}
+
+\begin{document}
+
+\begin{scheme}
+    \begin{minipage}{.48\textwidth}
+        \includegraphics[width=\textwidth]{normalimage}
+        \captionof{figure}{My figure}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}{.48\textwidth}
+        \includegraphics[width=\textwidth]{chemfig}
+        \caption{My chem scheme}
+    \end{minipage}%
+\end{scheme}
+
+\end{document}

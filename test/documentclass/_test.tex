@@ -1,0 +1,245 @@
+\errorcontextlines9
+\newif\ifshowmacros
+%\showmacrostrue
+
+\ifx\usepackage\RequirePackage\else
+\documentclass{article}
+\usepackage{float}
+\fi
+
+\makeatletter
+%%%      \gdef\@chapter[#1]#2{\relax\relax\relax\@empty}%
+\makeatother
+
+\usepackage[rightFloats]{fltpage}
+\usepackage{rotating}
+\usepackage{sidecap}
+\usepackage{wrapfig}
+\usepackage{listings}
+
+%%%\usepackage{hyperref}
+\usepackage[figurename=Abbildung,listfigurename={Liste der Abbildungen},within=none]{newfloat}
+\ifdefined\chapter
+  \newfloatsetup{chapterlistsgap=20pt}
+\fi
+\SetupFloatingEnvironment{figure}{within=section}
+\ForEachFloatingEnvironment{\typeout{#1}}
+\ForEachFloatingEnvironment*{\typeout{*#1}}
+
+\makeatletter
+
+\DeclareFloatingEnvironment{diagram}
+\ifcsname theHdiagram\endcsname
+% ok
+%\show\theHdiagram
+\else
+% wrong
+\PackageError{newfloat}{theHdiagram should be defined!}{}
+\endinput
+\fi
+\ifdefined\chapter
+  \SetupFloatingEnvironment{diagram}{within=chapter}
+\fi
+\ifshowmacros
+\showthe\c@float@type
+\show\thediagram
+\show\theHdiagram
+\show\fps@diagram
+\show\ftype@diagram
+\show\ext@diagram
+\show\fnum@diagram
+\show\listofdiagrams
+\show\l@diagram
+\show\listdiagramname
+\show\diagramname
+\fi
+
+\DeclareFloatingEnvironment[placement=h,fileext=lop,within=section]{program}
+  [Programm][Programmverzeichnis]
+\ifdefined\chapter
+  \SetupFloatingEnvironment{program}{chapterlistsgaps=off}
+\fi
+\ifshowmacros
+\showthe\c@float@type
+\show\theprogram
+\show\theHprogram
+\show\fps@program
+\show\ftype@program
+\show\ext@program
+\show\fnum@program
+\show\listofprograms
+\show\l@program
+\show\listprogramname
+\show\programname
+\fi
+
+\ifdefined\chapter
+  \SetupFloatingEnvironment{lstlisting}{chapterlistsgaps=on}
+\fi
+
+\ifshowmacros
+\show\newfloat@typelist
+\fi
+
+\makeatother
+
+\begin{document}
+\ifshowmacros
+\show\FPdiagram
+\show\endFPdiagram
+\show\SCdiagram
+\show\endSCdiagram
+\fi
+
+\tableofcontents
+\listoffigures
+\listofdiagrams
+\listofprograms
+\lstlistoflistings
+
+\ifdefined\chapter \else
+\def\chapter{\clearpage\origsection}
+\let\origsection\section
+\let\section\subsection
+\let\subsection\subsubsection
+\fi
+
+%\chapter{plain}
+\clearpage
+
+\begin{figure}[!ht]
+\centering A
+\caption{A figure}
+\end{figure}
+
+\begin{diagram}[!ht]
+\centering xyz
+\caption{A diagram}
+\label{diagram}
+\end{diagram}
+
+\begin{program}[!ht]
+  \verb|#include <stdio.h>|\\
+  \verb|int main()|\\
+  \verb|{|\\
+  \verb|    printf( "Hello world!\n" );|\\
+  \verb|    return 0;|\\
+  \verb|}|
+  \caption{A very simple C program}
+\end{program}
+
+   \begin{lstlisting}[caption={Useless code},label=useless1,captionpos=t]
+   for i:=maxint to 0 do
+   begin
+       { do nothing }
+   end;
+   \end{lstlisting}
+
+\ifdefined\SCdiagram
+\chapter{fltpage}
+
+The following example will produce a caption below and an almost empty facing
+page:
+\begin{FPdiagram}
+ \caption[A caption alone on a page]%
+         {A caption alone on a page will belong to the
+          following figure without a caption!}
+ \newlength\tempdima
+ \setlength\tempdima\textheight
+ \addtolength\tempdima{-7pt}%
+ \fbox{\rule[-10cm]{0pt}{\tempdima}Frame symbolizing figure on a whole page.\hspace{5cm}}
+\end{FPdiagram}
+\begin{quote}
+  \verb|\usepackage[rightFloats]{fltpage}|\\
+  \ldots\\
+  \verb|\begin{FPdiagram}|\\
+  \verb|  \caption{A caption alone ... figure without a caption!}|\\
+  \verb|  \fbox{\rule[-10cm]{0pt}{\textheight}Frame ... page.\hspace{5cm}}|\\
+  \verb|\end{FPdiagram}|
+\end{quote}
+\fi
+
+\ifdefined\sidewaysdiagram
+\chapter{rotating}
+
+\begin{sidewaysdiagram}
+\centering
+\strut Oh wie sch\"on ist doch der Westerwald!
+\caption{A sidewaysdiagram}
+\end{sidewaysdiagram}
+\begin{sidewaysprogram}
+  \verb|#include <stdio.h>|\\
+  \verb|int main()|\\
+  \verb|{|\\
+  \verb|    printf( "Hello world!\n" );|\\
+  \verb|    return 0;|\\
+  \verb|}|
+  \caption{A very simple C program}
+\end{sidewaysprogram}
+\fi
+
+\ifdefined\SCdiagram
+\chapter{sidecap}
+
+\begin{SCdiagram}
+\strut Oh wie sch\"on ist doch der Westerwald!
+\caption{A SCdiagram}
+\end{SCdiagram}
+\begin{SCprogram}
+  \verb|#include <stdio.h>|\\
+  \verb|int main()|\\
+  \verb|{|\\
+  \verb|    printf( "Hello world!\n" );|\\
+  \verb|    return 0;|\\
+  \verb|}|
+  \caption{A very simple C program}
+\end{SCprogram}
+\fi
+
+\ifdefined\wrapdiagram
+\chapter{wrapfig}
+
+\newcommand\sample{Some text for our page
+ that is reused over and over again. }
+
+The starting place for the wrapfigure
+environment was manually determined in
+the current exsample by first setting the text without
+\begin{wrapfigure}[7]{l}[0.2\width]{0pt}
+  \centering
+  \fbox{This is a ``wrapfigure''.}
+  \caption{An example of the
+    \texttt{wrapfigure} environment}
+\end{wrapfigure}
+the figure to find the linebreaks.
+
+\sample \sample \sample
+\sample \sample \sample
+\sample \sample \sample
+
+The starting place for the wrapfigure
+environment was manually determined in
+the current exsample by first setting the text without
+\begin{wrapdiagram}[7]{l}[0.2\width]{0pt}
+  \centering
+  \fbox{This is a ``wrapdiagram''.}
+  \caption{An example of the
+    \texttt{wrapdiagram} environment}
+\end{wrapdiagram}
+the figure to find the linebreaks.
+
+\sample \sample \sample
+\sample \sample \sample
+\sample \sample \sample
+\fi
+
+\chapter{Appendix}
+
+   \begin{lstlisting}[caption={Useless code},label=useless2,captionpos=t]
+   for i:=maxint to 0 do
+   begin
+       { do nothing }
+   end;
+   \end{lstlisting}
+
+\end{document}

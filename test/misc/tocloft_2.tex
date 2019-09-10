@@ -1,0 +1,33 @@
+\documentclass[12pt,oneside]{book}
+\usepackage[ngerman]{babel}
+\usepackage[demo]{graphicx}
+\usepackage{tocloft}
+
+\usepackage[figurewithin=none,figurename={Abb.},listfigurename={Verzeichnis 1}]{newfloat}
+
+\DeclareFloatingEnvironment[fileext=loa]{figureA}[Fig.][Verzeichnis 2] 
+
+\setlength{\cftfigindent}{0cm}
+\renewcommand{\cftfigpresnum}{Abb.~}
+\setlength{\cftfignumwidth}{1.75cm}
+\renewcommand{\cftdotsep}{\cftnodots}
+
+\PrepareListOf{figureA}{\renewcommand{\cftfigpresnum}{Fig.~}}
+
+\begin{document}
+
+\begin{figure}[!ht]
+\centering\includegraphics{bild1}\caption{Bild f"ur Verzeichnis 1}
+\end{figure}
+
+\begin{figureA}[!ht]
+\centering\includegraphics{bild1}\caption{Bild f"ur Verzeichnis 2}
+\end{figureA}
+
+\newpage
+\listoffigures
+
+\newpage
+\listoffigureAs
+
+\end{document}
