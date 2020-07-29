@@ -285,11 +285,11 @@
 \newcommand*\SetupFloatingEnvironment[1]{%
   \newfloat@addtolist{#1}%
   \newfloat@setoptions{#1}}
-\newcommand\ForEachFloatingEnvironment{%
+\newcommand*\ForEachFloatingEnvironment{%
   \@ifstar
-    {\@ForEachFloatingEnvironment\@gobble}%
-    {\@ForEachFloatingEnvironment\@iden}}
-\newcommand\@ForEachFloatingEnvironment[2]{%
+    {\newfloat@foreach\@gobble}%
+    {\newfloat@foreach\@iden}}
+\newcommand\newfloat@foreach[2]{%
   \def\@elt##1{#2}%
   \newfloat@list
   \let\@elt\relax

@@ -1089,29 +1089,41 @@
 % \subsection{\cs{ForEachFloatingEnvironment}}
 %
 % \begin{macro}{\ForEachFloatingEnvironment}
-% |\ForEachFloatingEnvironment|\marg{code}
-% will execute the given code for each floating environment.
+% |\ForEachFloatingEnvironment|\marg{code with \#1}\par
+% will execute the given code for each (known) floating environment.
 % The starred variant will only work for already existing environments,
 % i.e.~no hook will be placed inside |\Declare|\-|Floating|\-|Environment|.
 %    \begin{macrocode}
-\newcommand\ForEachFloatingEnvironment{%
+\newcommand*\ForEachFloatingEnvironment{%
   \@ifstar
-    {\@ForEachFloatingEnvironment\@gobble}%
-    {\@ForEachFloatingEnvironment\@iden}}
+    {\newfloat@foreach\@gobble}%
+    {\newfloat@foreach\@iden}}
 %    \end{macrocode}
 %    \begin{macrocode}
-\newcommand\@ForEachFloatingEnvironment[2]{%
+\newcommand\newfloat@foreach[2]{%
   \def\@elt##1{#2}%
   \newfloat@list
   \let\@elt\relax
   #1{\newfloat@addtohook{#2}}}
 %    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\newfloat@addtohook}
+% |\newfloat@addtohook|\marg{code with \#1}\par
+% adds code to the hook called in |\Declare|\-|Floating|\-|Environment|.\par
+% Note: We use |\provide|\-|command| instead of |\new|\-|command| here since the
+% exact same code is defined for |\For|\-|Each|\-|Caption|\-|Type| offered by
+% the \package{caption3} package.
 %    \begin{macrocode}
 \providecommand\newfloat@addtohook[1]{%
   \toks@=\expandafter{\newfloat@hook{##1}#1}%
   \edef\@tempa{\def\noexpand\newfloat@hook####1{\the\toks@}}%
   \@tempa}
 %    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\newfloat@hook}
+% Hook used in |\Declare|\-|Floating|\-|Environment|.
 %    \begin{macrocode}
 \providecommand*\newfloat@hook[1]{}
 %    \end{macrocode}
