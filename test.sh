@@ -2,123 +2,448 @@
 
 # test.sh
 # Author: Axel Sommerfeldt (axel.sommerfeldt@f-m.fm)
-# URL:    https://gitlab.com/axelsommerfeldt/newfloat
+# URL:    https://gitlab.com/axelsommerfeldt/caption
+# Date:   2020-09-13
 
-# shellcheck disable=SC2103,SC2164
-
-help=false
-if [[ $1 == "-?" || $1 == "--help" ]]
-then
-  printf "Syntax: ./test.sh [<sub-directory>]\n"
-  printf "where <sub-directory> is either:\n"
-  printf "  all   - compiles all test files (default)\n"
-  printf "  clean - remove intermediate files only\n"
-  printf "or one of:\n "
-  help=true # print list of sub-directories without processing them
-fi
+# shellcheck disable=SC2155
 
 basedir=$(pwd)
-logfile="$basedir/test.log"
 
-# Store argument as $dironly (default is "all" -> "*")
-dironly=${1:-all}
-if [[ $dironly == "all" ]]; then dironly="*"; fi
-dirfound=false  # no matching directory was found so far
+all=true            # default: Target "all"
+disabled_cases=()   # default: Compile all testcases
+exit_on_error=true  # default: Exit after error
+interactive=true    # default: Interactive mode
+output_file=""      # default: Don't generate report file
 
-cleanup()
+shopt -s nullglob
+
+function main
+{
+  local gl_tests=0
+  local gl_failures=0
+  local gl_disabled=0
+  local gl_content=""
+  local gl_start=$(timestamp)
+
+  local disable_arg=false
+  local interactive_arg=false
+  local output_arg=false
+
+  local arg
+  for arg in "$@"
+  do
+    if [[ $arg == "-?" || $arg == "--help" ]]
+    then
+      printf "Usage: ./test.sh [OPTION]... [all|clean|DIRECTORY|FILE]...\n"
+      printf "\n"
+      printf "  -d, --disable=FILE      don't compile FILE (or DIRECTORY)\n"
+      printf "  -i, --interactive=BOOL  set interactive mode (default:true)\n"
+      printf "  -o, --output=FILE       generate report file\n"
+      printf "\n"
+      exit 1
+    elif [[ $arg == "-d" || $arg == "--disable" ]]
+    then
+      disable_arg=true
+    elif $disable_arg
+    then
+      disable "$arg"
+      disable_arg=false
+    elif [[ ${arg:0:2} == "-d" ]]
+    then
+      disable "${arg:2}"
+    elif [[ ${arg:0:10} == "--disable=" ]]
+    then
+      disable "${arg:10}"
+    elif [[ $arg == "-i" || $arg == "--interactive" ]]
+    then
+      interactive_arg=true
+    elif $interactive_arg
+    then
+      interactive=$(boolean "$arg")
+      interactive_arg=false
+    elif [[ ${arg:0:2} == "-i" ]]
+    then
+      interactive=$(boolean "${arg:2}")
+    elif [[ ${arg:0:14} == "--interactive=" ]]
+    then
+      interactive=$(boolean "${arg:14}")
+    elif [[ $arg == "-o" || $arg == "--output" ]]
+    then
+      output_arg=true
+    elif $output_arg
+    then
+      output_file="$arg"
+      exit_on_error=false
+      interactive=false
+      output_arg=false
+    elif [[ ${arg:0:2} == "-o" ]]
+    then
+      output_file="${arg:2}"
+      exit_on_error=false
+      interactive=false
+    elif [[ ${arg:0:9} == "--output=" ]]
+    then
+      output_file="${arg:9}"
+      exit_on_error=false
+      interactive=false
+    elif [[ $arg == "all" ]]
+    then
+      all=true
+    elif [[ $arg == "clean" ]]
+    then
+      clean
+      all=false
+    else
+      all=false
+
+      # Remove trailing /
+      if [[ ${arg:${#arg}-1} == "/" ]]
+      then
+         arg=${arg:0:${#arg}-1}
+      fi
+
+      # Compile either directory content or file
+      if [[ -d "$basedir/$arg" ]]
+      then
+        compile_dir "$arg"
+      elif [[ -f "$basedir/$arg" ]]
+      then
+        compile_file "$arg"
+      else
+        printf "*** Invalid argument '%s'.\n" "$arg"
+        exit 1
+      fi
+    fi
+  done
+
+  if $all
+  then
+    # Compile all files in all directories
+    local dirs=(*)
+    local dir
+    for dir in "${dirs[@]}"
+    do
+      if [[ -d "$basedir/$dir" ]]
+      then
+        is_disabled "$dir" || compile_dir "$dir"
+      fi
+    done
+  fi
+
+  local gl_end=$(timestamp)
+
+  # Generate report file, if requested
+  # Note: GitLab CI does not care about "testsuites" or "testsuite" elements, it only evaluates "testcase" elements.
+  # The "classname" attribute will be displayed as "Suite", the "name" attribute as "Name", and the "time" as "Duration".
+  # The combination of "classname" and "name" must be unique, otherwise the "testcase" elements will not be counted as
+  # different tests. If the "testcase" contains a "failure" element it will be counted as "Failed", if it contains an
+  # "error" element it will be counted as "Error", if it contains a "skipped" element is will be counted as "Skipped",
+  # and all other "testcase" elements will be counted as "Passed".
+  # See also: https://docs.gitlab.com/ee/ci/unit_test_reports.html
+  if [[ -n $output_file ]]
+  then
+    cd "$basedir" || exit
+    printf '<?xml version="1.0" encoding="UTF-8"?>\n<testsuites name=\"%s\" tests=\"%d\" failures=\"%d\" disabled=\"%d\" time=\"%s\">\n%s</testsuites>\n' "AllTests" "$gl_tests" "$gl_failures" "$gl_disabled" "$(timestamp_diff "$gl_start" "$gl_end")" "$gl_content" > "$output_file"
+  fi
+
+  # Return 0 if no failures occured, 1 otherwise
+  (( gl_failures == 0 ))
+}
+
+function clean
 {
   # Remove interim files
   # Note: This removes all unstaged (new) files as well.
   git clean -fdx -e source/ltxdoc.cfg
 }
 
-compile_all()
+function compile_dir
 {
-  [[ -d $1 ]] || return # Process directories only
+  # Compile all files in all sub-directories
 
-  if $help
+  local dir="$1"
+
+  cd "$basedir/$dir" || exit
+
+  local subdirs=(*)
+  local files=(*.dtx *.ltx *.tex)
+
+  local subdir
+  for subdir in "${subdirs[@]}"
+  do
+    if [[ -d "$basedir/$dir/$subdir" ]]
+    then
+      is_disabled "$dir/$subdir" || compile_dir "$dir/$subdir"
+    fi
+  done
+
+  if (( ${#files[@]} > 0 ))
   then
-    # In help mode only print the sub-directory name
-    printf " $1"
-  # shellcheck disable=SC2053
-  elif [[ $1 == $dironly ]]
-  then
-    dirfound=true # matching directory found
+    pre_compile_files
 
-    # Compile all files in the given directory
-    cd "$1"
-    cp -a "$basedir"/tex/*.sty .
+    local tests=0
+    local failures=0
+    local disabled=0
+    local content=""
+    local start=$(timestamp)
 
-    shopt -s nullglob
-    files=(*.dtx *.ltx *.tex)
+    local file
     for file in "${files[@]}"
     do
-      compile "$1" "$file"
+      is_disabled "$dir" "$file" || compile_dir_file "$dir" "$file"
     done
 
-    cd ..
+    local end=$(timestamp)
+
+    post_compile_files
   fi
 }
 
-compile()
+function compile_file
 {
-  # Skip example documents which purpose is to produce an error
-  # (or cannot be compiled for a different reason)
-  [[ $1 == "misc"          && $2 == "redefine_figure.tex" ]] && return  # Should issue error
-  [[ $1 == "documentclass" && $2 == "amsbook.tex"         ]] && return  # TODO
-  [[ $1 == "documentclass" && $2 == "smfbook.tex"         ]] && return  # TODO
+  # Compile a single file
 
-  # Compile document three times (so interim files will be used)
-  pdflatex "$2" || failed "$1" "$2"
-  pdflatex "$2" || failed "$1" "$2"
-  pdflatex "$2" || failed "$1" "$2"
-  printf "Compiling %s/%s passed.\n" "$1" "$2" | tee -a "$logfile"
+  local dir=$(dirname "$1")
+  local file=$(basename "$1")
+
+  pre_compile_files
+
+  local tests=0
+  local failures=0
+  local disabled=0
+  local content=""
+  local start=$(timestamp)
+
+  compile_dir_file "$dir" "$file"
+
+  local end=$(timestamp)
+
+  post_compile_files
 }
 
-failed()
+function pre_compile_files
 {
-  # Print error message and exit
-  printf "\n*** Compiling %s/%s failed.\n" "$1" "$2" | tee -a "$logfile"
-  exit 1
+  # Change directory
+  cd "$basedir/$dir" || exit
+
+  # Update local LaTeX packages
+  cp -a "$basedir"/tex/*.sty "$basedir"/tex/*.sto .
 }
 
-# Do not remove intermediate files in help mode
-if ! $help
-then
-  # Remove intermediate files
-  cleanup
-  [[ $dironly != "clean" ]] || exit
-fi
+function post_compile_files
+{
+  # Generate report
+  local temp
+  printf -v temp '<testsuite name=\"%s\" tests=\"%d\" failures=\"%d\" disabled=\"%d\" time=\"%s\">\n%s</testsuite>\n' "$dir" "$tests" "$failures" "$disabled" "$(timestamp_diff "$start" "$end")" "$content"
+  gl_content+="$temp"
 
-# Compile all package documentations
-compile_all "source"
+  # Update global counters
+  (( gl_tests += tests ))
+  (( gl_failures += failures ))
+  (( gl_disabled += disabled ))
+}
 
-# Compile all test documents
-cd test
-dirs=(*)
-for dir in "${dirs[@]}"
-do
-  compile_all "$dir"
-done
-cd ..
+function compile_dir_file
+{
+  # Compile a single file as "testcase" as part of a "testsuite"
 
-# Compile all issue documents
-cd issues
-dirs=(*)
-for dir in "${dirs[@]}"
-do
-  compile_all "$dir"
-done
-cd ..
+  ((++tests))
 
-# Print test result
-if $help
-then
-  printf "\n"
-elif $dirfound
-then
-  printf "\nThat's all, folks!\n"
-else
-  printf "*** No sub-directory '%s' found.\n" "$dironly" >&2
-fi
+  local start=$(timestamp)
+  compile "$2"
+  local result=$?
+  local end=$(timestamp)
+
+  local temp
+  if (( result == 0 ))
+  then
+    printf "Compiling %s/%s passed.\n" "$1" "$2"
+    printf -v temp '<testcase classname="%s" name="%s" time="%s" />\n' "$1" "$2" "$(timestamp_diff "$start" "$end")"
+  else
+    printf "\n*** Compiling %s/%s failed.\n" "$1" "$2"
+    printf -v temp '<testcase classname="%s" name="%s" time="%s"><failure message="%s" type="ERROR" /></testcase>\n' "$1" "$2" "$(timestamp_diff "$start" "$end")" "$(xml_escape "$message")"
+
+    ((++failures))
+
+    if $exit_on_error
+    then
+      exit $result
+    fi
+  fi
+
+  content+="$temp"
+  return $result
+}
+
+function compile
+{
+  # Compile document up to three times (so interim files will be used)
+
+  local logfile="${1%.*}.log"
+
+  # shellcheck disable=SC2034
+  for i in {1..3}
+  do
+    local result log
+
+    if $interactive
+    then
+      log=""
+      pdflatex "$1"
+      result=$?
+    else
+#     sleep 0.1
+      log=$(pdflatex -halt-on-error "$1")
+      result=$?
+    fi
+
+    if (( result != 0 ))
+    then
+      printf '%s' "$log"
+      message=$(tail -n1 "$logfile")  # failure message for report file
+      return $result
+    fi
+    if ! grep -Fq "Rerun to get" "$logfile"
+    then
+      break
+    fi
+  done
+}
+
+function boolean
+{
+  # Convert boolean value to either "false" or "true"
+
+  if [[ $1 == "0" || $1 == "false" || $1 == "no" ]]
+  then
+    printf 'false\n'
+  elif [[ $1 == "1" || $1 == "true" || $1 == "yes" ]]
+  then
+    printf 'true\n'
+  else
+    printf "*** Invalid boolean value '%s'.\n" "$1"
+    exit 1
+  fi
+}
+
+function disable
+{
+  # Disable a testsuite or testcase
+
+  disabled_cases+=( "$1" )
+}
+
+function is_disabled
+{
+  # Test if the given testsuite or testcase is disabled
+
+  local path="$1"
+  if [[ -n $2 ]]; then path+="/$2"; fi
+
+  local d
+  for d in "${disabled_cases[@]}"
+  do
+    if [[ $d == "$path" ]]
+    then
+
+      # If a file (=testcase) is disabled, create an entry in the report file
+      # See also: https://gitlab.com/gitlab-org/gitlab/-/blob/master/spec/lib/gitlab/ci/parsers/test/junit_spec.rb
+      if [[ -n $2 ]]
+      then
+        ((++tests))
+        ((++disabled))
+
+        printf "* Compiling %s/%s skipped.\n" "$1" "$2"
+        printf -v temp '<testcase classname="%s" name="%s" time="%s"><skipped/></testcase>\n' "$1" "$2" "0.0"
+        content+="$temp"
+      fi
+
+      # Directory resp. file is disabled
+      return 0
+    fi
+  done
+  return 1
+}
+
+function timestamp
+{
+  # Print timestamp
+
+  date -u "+%s.%N"  # Seconds + nanoseconds since 1970-01-01
+}
+function timestamp_diff
+{
+  # Print difference of timestamps, in seconds
+
+# local start_s=$(("10#${1%.*}")) # older variants of bash do not support "10#" here
+# local start_n=$(("10#${1#*.}"))
+# local   end_s=$(("10#${2%.*}"))
+# local   end_n=$(("10#${2#*.}"))
+
+  local start_s=$(strip "${1%.*}")
+  local start_n=$(strip "${1#*.}")
+  local   end_s=$(strip "${2%.*}")
+  local   end_n=$(strip "${2#*.}")
+
+  if (( end_n < start_n ))
+  then
+    ((end_s -= 1))
+    ((end_n += 1000000000))
+  fi
+
+  printf '%u.%09u\n' "$((end_s - start_s))" "$((end_n - start_n))"
+}
+
+function strip
+{
+  # Strip leading 0s so the number will not be interpreted as octal
+
+  local i="$1"
+  while (( ${#i} > 1 )) && [[ ${i:0:1} == "0" ]]
+  do
+    i=${i:1}
+  done
+  printf '%u\n' "$i"
+}
+
+function xml_escape
+{
+  local src="$1"
+  local dest=""
+
+  while (( ${#src} > 0 ))
+  do
+    local ch=${src:0:1}
+    src=${src:1}
+
+    if [[ $ch == '&' ]]
+    then
+      dest+="&amp;"
+    elif [[ $ch == '<' ]]
+    then
+      dest+="&lt;"
+    elif [[ $ch == '>' ]]
+    then
+      dest+="&gt;"
+    elif [[ $ch == "'" ]]
+    then
+      dest+="&apos;"
+    elif [[ $ch == '"' ]]
+    then
+      dest+="&quot;"
+    else
+      dest+="$ch"
+    fi
+  done
+
+  printf '%s\n' "$dest"
+}
+
+# Test "newfloat package"
+
+disable test/documentclass/amsbook.tex # TODO
+disable test/documentclass/smfbook.tex # TODO
+disable test/misc/redefine_figure.tex  # Should issue error
+
+main "$@"
 
