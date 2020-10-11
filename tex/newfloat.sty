@@ -28,7 +28,7 @@
 %% and the derived file newfloat.sty.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1994/12/01]
-\ProvidesPackage{newfloat}[2019/09/02 v1.1l Defining new floating environments (AR)]
+\ProvidesPackage{newfloat}[2020/10/11 v1.1m Defining new floating environments (AR)]
 \newcommand*\newfloat@Info[1]{%
   \PackageInfo{newfloat}{#1}}
 \newcommand*\newfloat@InfoNoLine[1]{%
@@ -162,8 +162,8 @@
   \ifcsname c@chapter\endcsname chapter\else none\fi}
 \@onlypreamble\newfloat@within@default
 \newcommand*\newfloat@setoption[1]{%
-  \edef\caption@tempa{\noexpand\@nameuse{newfloat@set#1}{\newfloat@type}}%
-  \caption@tempa}
+  \edef\newfloat@tempa{\noexpand\@nameuse{newfloat@set#1}{\newfloat@type}}%
+  \newfloat@tempa}
 \newcommand*\newfloat@setfileext[2]{%
   \@namedef{ext@#1}{#2}}
 \define@key{@newfloat}{fileext}{%

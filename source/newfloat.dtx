@@ -530,7 +530,7 @@
 %
 %    \begin{macrocode}
 \NeedsTeXFormat{LaTeX2e}[1994/12/01]
-\ProvidesPackage{newfloat}[2019/09/02 v1.1l Defining new floating environments (AR)]
+\ProvidesPackage{newfloat}[2020/10/11 v1.1m Defining new floating environments (AR)]
 %    \end{macrocode}
 %
 % \begin{macro}{\newfloat@Info}
@@ -830,12 +830,13 @@
 % \end{macro}
 %
 % \begin{macro}{\newfloat@setoption}
-% \changes{v1.1}{2015/09/15}{Bugfix: \cs{@expandtwoargs} replaced by own expansion so the option value do not get expanded anymore}
+% \changes{v1.1}{2015/09/15}{\cs{@expandtwoargs} replaced by own expansion so the option value do not get expanded anymore}
+% \changes{v1.1m}{2020/10/11}{Usage of \cs{caption@tempa} replaced by \cs{newfloat@tempa}}
 % |\newfloat@setoption|\marg{option name}{options}
 %    \begin{macrocode}
 \newcommand*\newfloat@setoption[1]{%
-  \edef\caption@tempa{\noexpand\@nameuse{newfloat@set#1}{\newfloat@type}}%
-  \caption@tempa}
+  \edef\newfloat@tempa{\noexpand\@nameuse{newfloat@set#1}{\newfloat@type}}%
+  \newfloat@tempa}
 %    \end{macrocode}
 % \end{macro}
 %
