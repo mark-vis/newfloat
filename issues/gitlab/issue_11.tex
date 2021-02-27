@@ -1,0 +1,29 @@
+% Issue: 11
+% Title: SX: line spacing in the list of algorithms(2e) disappears with newfloat option of minted
+% Date:  Feb 27, 2021 10:29am GMT+0100
+% URL:   https://gitlab.com/axelsommerfeldt/newfloat/issues/11
+
+% From:  https://tex.stackexchange.com/questions/585114/line-spacing-in-the-list-of-algorithms2e-disappears-with-newfloat-option-of-mi
+
+% Loading the newfloat package disables the "chapters gap" of algorithm2e. Example document:
+
+\documentclass{book}
+
+\usepackage{algorithm2e}
+%\usepackage[newfloat]{minted}
+\usepackage{newfloat}
+
+\begin{document}
+
+\listofalgorithms % here the spacing is correct
+
+\chapter{A chapter}
+\begin{algorithm}\caption{An algorithm}\end{algorithm}
+\begin{algorithm}\caption{An algorithm}\end{algorithm}
+
+\chapter{A chapter}
+\begin{algorithm}\caption{An algorithm}\end{algorithm}
+\begin{algorithm}\caption{An algorithm}\end{algorithm}
+
+\end{document}
+
