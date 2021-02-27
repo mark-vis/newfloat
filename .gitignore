@@ -21,10 +21,10 @@
 *.ttt
 pdfa.xmpi
 source/ltxdoc.cfg
-source/*.pdf
-source/*.sty
-test/*/newfloat.sty
+source/**/*.pdf
+source/**/*.sty
+test/*/newfloat*.sty
 test/*/*.pdf
-issues/*/newfloat.sty
+issues/*/newfloat*.sty
 issues/*/*.pdf
 

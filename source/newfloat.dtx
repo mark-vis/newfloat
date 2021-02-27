@@ -22,12 +22,12 @@
 % and the derived file newfloat.sty.
 % 
 % \fi
-% \CheckSum{1618}
+% \CheckSum{1624}
 %
 % \iffalse
 %<*driver>
 \NeedsTeXFormat{LaTeX2e}[1994/12/01]
-\ProvidesFile{newfloat.drv}[2013/04/27 v1.1 This package offers a command for defining new floating environments]
+\ProvidesFile{newfloat.drv}[2021/02/27 v1.1 This package offers a command for defining new floating environments]
 \hbadness=9999 \newcount\hbadness \hfuzz=48pt % Make TeX shut up.
 %
 \documentclass{ltxdoc}
@@ -219,10 +219,10 @@
 %   |  name=Matrix,|\\
 %   |  placement=p,|\\
 %   |  within=section,|\\
-%   |  chapterlistsgaps=off,|\\
-%   |  ]{matrix}|
+%   |  chapterlistsgaps=off|\\
+%   |  ]{matrixx}|
 % \end{quote}
-% will define a new floating environment called |matrix| with the given settings.
+% will define a new floating environment called |matrixx| with the given settings.
 % Please note that names which contain spaces needs to be enclosed in curly braces.
 %
 % \pagebreak[3]
@@ -527,8 +527,26 @@
 % \pagebreak[3]
 % \subsection{Identification}
 %
+% We need at least \LaTeX2e\ version 1994/12/01.
 %    \begin{macrocode}
 \NeedsTeXFormat{LaTeX2e}[1994/12/01]
+%    \end{macrocode}
+%
+% Bypass the release declarations in case the \LaTeX\ kernel doesn’t know how to deal with them
+% (as suggested by \url{https://www.latex-project.org/publications/2018-FMi-TUB-tb122mitt-version-rollback.pdf}).
+%    \begin{macrocode}
+\providecommand\DeclareRelease[3]{}
+\providecommand\DeclareCurrentRelease[2]{}
+%    \end{macrocode}
+%
+% Declare all supported releases.
+%    \begin{macrocode}
+\DeclareRelease{v1.0}{2011-10-30}{newfloat_v1.0.sty}
+\DeclareCurrentRelease{v1.1}{2013-05-12} % 1st CTAN release of v1.1
+%    \end{macrocode}
+%
+% Identify the current version of the package.
+%    \begin{macrocode}
 \ProvidesPackage{newfloat}[2021/02/27 v1.1o Defining new floating environments (AR)]
 %    \end{macrocode}
 %
