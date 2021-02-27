@@ -6,7 +6,7 @@
 %%
 %% newfloat.dtx  (with options: `package')
 %% 
-%% Copyright (C) 2011-2019 Axel Sommerfeldt (axel.sommerfeldt@f-m.fm)
+%% Copyright (C) 2011-2021 Axel Sommerfeldt (axel.sommerfeldt@f-m.fm)
 %% 
 %% https://gitlab.com/axelsommerfeldt/newfloat
 %% 
@@ -28,7 +28,7 @@
 %% and the derived file newfloat.sty.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1994/12/01]
-\ProvidesPackage{newfloat}[2020/10/11 v1.1m Defining new floating environments (AR)]
+\ProvidesPackage{newfloat}[2021/02/27 v1.1n Defining new floating environments (AR)]
 \newcommand*\newfloat@Info[1]{%
   \PackageInfo{newfloat}{#1}}
 \newcommand*\newfloat@InfoNoLine[1]{%
@@ -130,7 +130,7 @@
     {\newfloat@list@of{#1}*}%
     {\newfloat@list@of{#1}\relax}}
 \newcommand*\newfloat@list@of[1]{%
-  \@expandtwoargs\newfloat@list@of@{#1}{\@nameuse{ext@#1}}}
+  \@expandtwoargs\newfloat@list@of@{#1}{\newfloat@ext{#1}}}
 \newcommand*\newfloat@list@of@[3]{%
   \begingroup
     \expandafter\let\expandafter\listfigurename\csname list#1name\endcsname
@@ -264,8 +264,8 @@
 \newcommand*\newfloat@announce[2]{%
   \@cons\newfloat@list{{#1}}%
   \@cons\newfloat@@list{{#1}}%
-  \newfloat@ifundefined{newfloat@ext@#2}{%
-    \@namedef{newfloat@ext@#2}{#1}%
+  \newfloat@ifundefined{newfloat@env@#2}{%
+    \@namedef{newfloat@env@#2}{#1}%
     \ifcsname c@lofdepth\endcsname
       \newfloat@ifundefined{c@#2depth}{%
         \newcounter{#2depth}%
@@ -281,6 +281,7 @@
   \fi
   \newfloat@hook{#1}}
 \@onlypreamble\newfloat@announce
+\newcommand*\newfloat@ext[1]{\@nameuse{ext@#1}}
 \newcommand*\newfloat@@list{}
 \newcommand*\SetupFloatingEnvironment[1]{%
   \newfloat@addtolist{#1}%
@@ -307,7 +308,7 @@
   \newfloat@ifinlist{#1}{}{%
     \ifcsname ext@#1\endcsname
       \@cons\newfloat@list{{#1}}%
-      \@namedef{newfloat@ext@\@nameuse{ext@#1}}{#1}%
+      \@namedef{newfloat@env@\@nameuse{ext@#1}}{#1}%
       \newfloat@let{@ifchapterlistsgap@#1}{\@iden}%
     \else
       \newfloat@Error{`#1' does not seem to be a floating environment}%
@@ -346,18 +347,18 @@
   \providecommand*\@addchapterlistsgaps{%
     \begingroup
       \def\@elt##1{%
-        \@expandtwoargs\@addchapterlistsgap{##1}{\@nameuse{ext@##1}}}%
+        \@expandtwoargs\@addchapterlistsgap{##1}{\newfloat@ext{##1}}}%
       \newfloat@list
     \endgroup}
   \providecommand*\@chapterlistsgap@off[1]{%
     \expandafter\let\csname @ifchapterlistsgap@#1\endcsname\@gobble
     \ifcsname unsettoc\endcsname
-      \@expandtwoargs\unsettoc{\@nameuse{ext@#1}}{chapteratlist}%
+      \@expandtwoargs\unsettoc{\newfloat@ext{#1}}{chapteratlist}%
     \fi}
   \providecommand*\@chapterlistsgap@on[1]{%
     \expandafter\let\csname @ifchapterlistsgap@#1\endcsname\@iden
     \ifcsname setuptoc\endcsname
-      \@expandtwoargs\setuptoc{\@nameuse{ext@#1}}{chapteratlist}%
+      \@expandtwoargs\setuptoc{\newfloat@ext{#1}}{chapteratlist}%
     \fi}
 \fi
 \define@key{newfloat}{chapterlistsgap}{%

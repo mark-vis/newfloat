@@ -2,7 +2,7 @@
 % 
 % This is file `newfloat.dtx'.
 % 
-% Copyright (C) 2011-2019 Axel Sommerfeldt (axel.sommerfeldt@f-m.fm)
+% Copyright (C) 2011-2021 Axel Sommerfeldt (axel.sommerfeldt@f-m.fm)
 % 
 % --------------------------------------------------------------------------
 % 
@@ -22,13 +22,12 @@
 % and the derived file newfloat.sty.
 % 
 % \fi
-% \CheckSum{1609}
+% \CheckSum{1612}
 %
 % \iffalse
 %<*driver>
 \NeedsTeXFormat{LaTeX2e}[1994/12/01]
-\ProvidesFile{newfloat.drv}%
-  [2013/04/27 v1.1 This package offers a command for defining new floating environments]
+\ProvidesFile{newfloat.drv}[2013/04/27 v1.1 This package offers a command for defining new floating environments]
 \hbadness=9999 \newcount\hbadness \hfuzz=48pt % Make TeX shut up.
 %
 \documentclass{ltxdoc}
@@ -530,7 +529,7 @@
 %
 %    \begin{macrocode}
 \NeedsTeXFormat{LaTeX2e}[1994/12/01]
-\ProvidesPackage{newfloat}[2020/10/11 v1.1m Defining new floating environments (AR)]
+\ProvidesPackage{newfloat}[2021/02/27 v1.1n Defining new floating environments (AR)]
 %    \end{macrocode}
 %
 % \begin{macro}{\newfloat@Info}
@@ -768,6 +767,7 @@
 % \begin{macro}{\newfloat@listof}
 % \changes{v1.1}{2013/04/27}{Revised}
 % \changes{v1.1g}{2019/08/28}{Starred variant added}
+% \changes{v1.1n}{2021/02/27}{Uses \cs{newfloat@ext} now instead of \cs{ext@xxx}}
 % |\newfloat@listof|\marg{float type}\\
 % typesets the list, using |\listoffigure| with patched list name and file extension.
 %    \begin{macrocode}
@@ -778,7 +778,7 @@
 %    \end{macrocode}
 %    \begin{macrocode}
 \newcommand*\newfloat@list@of[1]{%
-  \@expandtwoargs\newfloat@list@of@{#1}{\@nameuse{ext@#1}}}
+  \@expandtwoargs\newfloat@list@of@{#1}{\newfloat@ext{#1}}}
 %    \end{macrocode}
 %    \begin{macrocode}
 \newcommand*\newfloat@list@of@[3]{%
@@ -1024,6 +1024,7 @@
 % \end{macro}
 %
 % \begin{macro}{\newfloat@announce}
+% \changes{v1.1n}{2021/02/27}{Defines \cs{newfloat@env@xxx} now instead of \cs{newfloat@ext@xxx}}
 % |\newfloat@announce|\marg{environment name}\marg{list file extension}
 %    \begin{macrocode}
 \newcommand*\newfloat@announce[2]{%
@@ -1033,8 +1034,8 @@
   \@cons\newfloat@@list{{#1}}%
 %    \end{macrocode}
 %    \begin{macrocode}
-  \newfloat@ifundefined{newfloat@ext@#2}{%
-    \@namedef{newfloat@ext@#2}{#1}%
+  \newfloat@ifundefined{newfloat@env@#2}{%
+    \@namedef{newfloat@env@#2}{#1}%
 %    \end{macrocode}
 % Support of \package{memoir} document class
 %    \begin{macrocode}
@@ -1063,6 +1064,15 @@
 %    \begin{macrocode}
   \newfloat@hook{#1}}
 \@onlypreamble\newfloat@announce
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\newfloat@ext}
+% \changes{v1.1n}{2021/02/27}{This macro added}
+% |\newfloat@ext|\marg{environment}
+% expands to the file extension used for the given \meta{environment}.
+%    \begin{macrocode}
+\newcommand*\newfloat@ext[1]{\@nameuse{ext@#1}}
 %    \end{macrocode}
 % \end{macro}
 %
@@ -1158,6 +1168,7 @@
 %
 % \begin{macro}{\newfloat@addtolist}
 % \changes{v1.0b}{2012/05/18}{Bugfix: Definition of \cs{@ifchapterlistsgap@}\meta{environment} added}
+% \changes{v1.1n}{2021/02/27}{Defines \cs{newfloat@env@xxx} now instead of \cs{newfloat@ext@xxx}}
 % |\newfloat@addtolist|\marg{environment}
 % adds an environment to the list of floating environments.
 %    \begin{macrocode}
@@ -1165,7 +1176,7 @@
   \newfloat@ifinlist{#1}{}{%
     \ifcsname ext@#1\endcsname
       \@cons\newfloat@list{{#1}}%
-      \@namedef{newfloat@ext@\@nameuse{ext@#1}}{#1}%
+      \@namedef{newfloat@env@\@nameuse{ext@#1}}{#1}%
       \newfloat@let{@ifchapterlistsgap@#1}{\@iden}%
     \else
       \newfloat@Error{`#1' does not seem to be a floating environment}%
@@ -1244,19 +1255,21 @@
 %
 % \begin{macro}{\@addchapterlistsgaps}
 % \changes{v1.0b}{2012/05/18}{Bugfix: Group added to make \cs{@addchapterlistsgap} work correctly}
+% \changes{v1.1n}{2021/02/27}{Uses \cs{newfloat@ext} now instead of \cs{ext@xxx}}
 % |\@addchapterlistsgaps|\par
 % will add the chapter lists gaps for all floating environments in |\newfloat@list|.
 %    \begin{macrocode}
   \providecommand*\@addchapterlistsgaps{%
     \begingroup
       \def\@elt##1{%
-        \@expandtwoargs\@addchapterlistsgap{##1}{\@nameuse{ext@##1}}}%
+        \@expandtwoargs\@addchapterlistsgap{##1}{\newfloat@ext{##1}}}%
       \newfloat@list
     \endgroup}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\@chapterlistsgap@off}
+% \changes{v1.1n}{2021/02/27}{Uses \cs{newfloat@ext} now instead of \cs{ext@xxx}}
 % |\@chapterlistsgap@off|\marg{float type}\par
 % switches the chapter lists gap off for the given float type.
 % Since \KOMAScript{} (still) supports |\float@exts| we need to handle
@@ -1266,19 +1279,20 @@
   \providecommand*\@chapterlistsgap@off[1]{%
     \expandafter\let\csname @ifchapterlistsgap@#1\endcsname\@gobble
     \ifcsname unsettoc\endcsname
-      \@expandtwoargs\unsettoc{\@nameuse{ext@#1}}{chapteratlist}%
+      \@expandtwoargs\unsettoc{\newfloat@ext{#1}}{chapteratlist}%
     \fi}
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\@chapterlistsgap@on}
+% \changes{v1.1n}{2021/02/27}{Uses \cs{newfloat@ext} now instead of \cs{ext@xxx}}
 % |\@chapterlistsgap@off|\marg{float type}\par
 % switches the chapter lists gap on for the given float type.
 %    \begin{macrocode}
   \providecommand*\@chapterlistsgap@on[1]{%
     \expandafter\let\csname @ifchapterlistsgap@#1\endcsname\@iden
     \ifcsname setuptoc\endcsname
-      \@expandtwoargs\setuptoc{\@nameuse{ext@#1}}{chapteratlist}%
+      \@expandtwoargs\setuptoc{\newfloat@ext{#1}}{chapteratlist}%
     \fi}
 %    \end{macrocode}
 % \end{macro}
@@ -2087,3 +2101,4 @@
 % \Finale
 %
 \endinput
+
