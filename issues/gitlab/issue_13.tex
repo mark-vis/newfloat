@@ -1,0 +1,29 @@
+% Issue: 13
+% Title: The option "chapterlistsgaps" results in an error when used with a document class w/o chapters
+% Date:  Feb 27, 2021 4:26pm GMT+0100
+% URL:   https://gitlab.com/axelsommerfeldt/newfloat/issues/13
+
+\documentclass{article}
+\usepackage{listings}
+
+\usepackage{newfloat}
+
+\DeclareFloatingEnvironment[
+	fileext=lox,
+	listname={List of Matrixes},
+	name=Matrix,
+	placement=p,
+	within=section,
+	chapterlistsgaps=off
+]{matrixx}
+
+\SetupFloatingEnvironment{lstlisting}{chapterlistsgaps=off}
+
+\begin{document}
+
+\begin{matrixx}
+\caption{A matrix}
+\end{matrixx}
+
+\end{document}
+

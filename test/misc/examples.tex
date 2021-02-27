@@ -1,0 +1,27 @@
+\documentclass{report}
+\usepackage{listings}
+
+\usepackage{newfloat}
+
+\DeclareFloatingEnvironment{diagram}
+\DeclareFloatingEnvironment[
+	fileext=lox,
+	listname={List of Matrixes},
+	name=Matrix,
+	placement=p,
+	within=section,
+	chapterlistsgaps=off
+]{matrixx}
+
+\SetupFloatingEnvironment{lstlisting}{chapterlistsgaps=off}
+
+\ForEachFloatingEnvironment*{\typeout{#1}}
+
+\begin{document}
+
+\begin{diagram}
+\caption{A diagram}
+\end{diagram}
+
+\end{document}
+

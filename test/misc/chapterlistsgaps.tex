@@ -1,0 +1,31 @@
+\documentclass{report}
+\usepackage{listings}
+
+\usepackage{newfloat}
+
+\SetupFloatingEnvironment{figure}{chapterlistsgaps=off}
+\SetupFloatingEnvironment{table}{chapterlistsgaps=on}
+\SetupFloatingEnvironment{lstlisting}{chapterlistsgaps=false}
+%\SetupFloatingEnvironment{lstlisting}{chapterlistsgaps=true}
+
+\begin{document}
+
+\listoffigures
+\listoftables
+\lstlistoflistings
+
+\chapter{A}
+\begin{figure}\caption{A figure}\end{figure}
+\begin{table}\caption{A table}\end{table}
+\begin{lstlisting}[caption=Some caption]
+print()
+\end{lstlisting}
+
+\chapter{B}
+\begin{figure}\caption{A figure}\end{figure}
+\begin{table}\caption{A table}\end{table}
+\begin{lstlisting}[caption=Some caption]
+print()
+\end{lstlisting}
+
+\end{document}

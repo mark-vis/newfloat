@@ -32,7 +32,7 @@
 \providecommand\DeclareCurrentRelease[2]{}
 \DeclareRelease{v1.0}{2011-10-30}{newfloat_v1.0.sty}
 \DeclareCurrentRelease{v1.1}{2013-05-12} % 1st CTAN release of v1.1
-\ProvidesPackage{newfloat}[2021/02/27 v1.1o Defining new floating environments (AR)]
+\ProvidesPackage{newfloat}[2021/02/27 v1.1p Defining new floating environments (AR)]
 \newcommand*\newfloat@Info[1]{%
   \PackageInfo{newfloat}{#1}}
 \newcommand*\newfloat@InfoNoLine[1]{%
@@ -243,17 +243,23 @@
   \def\newfloat@within@value{none}}
 \newcommand*\newfloat@setchapterlistsgaps[2]{%
   \edef\@tempa{#2}%
-  \def\@tempb{off}%
-  \ifx\@tempa\@tempb
-    \@chapterlistsgap@off{#1}%
-  \else
-    \def\@tempb{on}%
-    \ifx\@tempa\@tempb
-      \@chapterlistsgap@on{#1}%
-    \else
-      \newfloat@Error{Invalid value `#2' for option `chapterlistsgaps'}%
-    \fi
+  \newfloat@setchapterlistsgaps@{off}{off}{#1}%
+  \newfloat@setchapterlistsgaps@{false}{off}{#1}%
+  \newfloat@setchapterlistsgaps@{on}{on}{#1}%
+  \newfloat@setchapterlistsgaps@{true}{on}{#1}%
+  \ifx\@tempa\newfloat@setchapterlistsgaps@ \else
+    \newfloat@Error{Invalid value `#2' for option `chapterlistsgaps'}%
   \fi}
+\newcommand*\newfloat@setchapterlistsgaps@[3]{%
+  \def\@tempb{#1}%
+  \ifx\@tempa\@tempb
+    \newfloat@chapterlistsgap@{#2}{#3}%
+    \let\@tempa\newfloat@setchapterlistsgaps@
+  \fi}
+\newcommand*\newfloat@chapterlistsgap@[1]{%
+  \@ifundefined{@chapterlistsgap@#1}%
+    {\@gobble}%
+    {\@nameuse{@chapterlistsgap@#1}}}
 \define@key{@newfloat}{chapterlistsgaps}{%
   \def\newfloat@chapterlistsgaps@value{#1}}
 \providecommand*\@removefromreset[2]{{%

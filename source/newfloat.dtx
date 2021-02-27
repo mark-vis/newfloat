@@ -22,7 +22,7 @@
 % and the derived file newfloat.sty.
 % 
 % \fi
-% \CheckSum{1624}
+% \CheckSum{1634}
 %
 % \iffalse
 %<*driver>
@@ -547,7 +547,7 @@
 %
 % Identify the current version of the package.
 %    \begin{macrocode}
-\ProvidesPackage{newfloat}[2021/02/27 v1.1o Defining new floating environments (AR)]
+\ProvidesPackage{newfloat}[2021/02/27 v1.1p Defining new floating environments (AR)]
 %    \end{macrocode}
 %
 % \begin{macro}{\newfloat@Info}
@@ -1006,17 +1006,27 @@
 %    \begin{macrocode}
 \newcommand*\newfloat@setchapterlistsgaps[2]{%
   \edef\@tempa{#2}%
-  \def\@tempb{off}%
-  \ifx\@tempa\@tempb
-    \@chapterlistsgap@off{#1}%
-  \else
-    \def\@tempb{on}%
-    \ifx\@tempa\@tempb
-      \@chapterlistsgap@on{#1}%
-    \else
-      \newfloat@Error{Invalid value `#2' for option `chapterlistsgaps'}%
-    \fi
+  \newfloat@setchapterlistsgaps@{off}{off}{#1}%
+  \newfloat@setchapterlistsgaps@{false}{off}{#1}%
+  \newfloat@setchapterlistsgaps@{on}{on}{#1}%
+  \newfloat@setchapterlistsgaps@{true}{on}{#1}%
+  \ifx\@tempa\newfloat@setchapterlistsgaps@ \else
+    \newfloat@Error{Invalid value `#2' for option `chapterlistsgaps'}%
   \fi}
+%    \end{macrocode}
+%    \begin{macrocode}
+\newcommand*\newfloat@setchapterlistsgaps@[3]{%
+  \def\@tempb{#1}%
+  \ifx\@tempa\@tempb
+    \newfloat@chapterlistsgap@{#2}{#3}%
+    \let\@tempa\newfloat@setchapterlistsgaps@
+  \fi}
+%    \end{macrocode}
+%    \begin{macrocode}
+\newcommand*\newfloat@chapterlistsgap@[1]{%
+  \@ifundefined{@chapterlistsgap@#1}%
+    {\@gobble}%
+    {\@nameuse{@chapterlistsgap@#1}}}
 %    \end{macrocode}
 %    \begin{macrocode}
 \define@key{@newfloat}{chapterlistsgaps}{%
@@ -1400,7 +1410,7 @@
 % \end{macro}
 %
 % Process the package options:
-% We use |\setkeys| here instead of |\ProcessOptions|.
+% We use |\set|\-|keys| here instead of |\Process|\-|Options|.
 %    \begin{macrocode}
 \let\@tempc\relax
 \@expandtwoargs\setkeys{newfloat}{planb,\@ptionlist{\@currname.\@currext}}%
