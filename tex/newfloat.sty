@@ -28,7 +28,7 @@
 %% and the derived file newfloat.sty.
 %% 
 \NeedsTeXFormat{LaTeX2e}[1994/12/01]
-\ProvidesPackage{newfloat}[2021/02/27 v1.1n Defining new floating environments (AR)]
+\ProvidesPackage{newfloat}[2021/02/27 v1.1o Defining new floating environments (AR)]
 \newcommand*\newfloat@Info[1]{%
   \PackageInfo{newfloat}{#1}}
 \newcommand*\newfloat@InfoNoLine[1]{%
@@ -409,16 +409,17 @@
     \let\if@thema\iffalse
     \let\if@chapnum\iffalse
     \def\@tempa[##1]##2{#2}%
-    \ifx\@tempa\@chapter
-      \newfloat@InfoNoLine{Document class `#1' detected}%
-      \gdef\@chapter[##1]##2{#3}%
-      \global\let\newfloat@replace@chapter\newfloat@dont@replace@chapter
-    \else\ifx\@tempa\Hy@org@chapter
-      \newfloat@InfoNoLine{Document class `#1' detected (Hy)}%
-      \gdef\Hy@org@chapter[##1]##2{#3}%
-      \global\let\newfloat@replace@chapter\newfloat@dont@replace@chapter
-    \fi\fi
+    \newfloat@replace@chapter@\@chapter{original}{#1}{#3}%
+    \newfloat@replace@chapter@\Hy@org@chapter{hyperref}{#1}{#3}%
+    \newfloat@replace@chapter@\algocf@original@chapter{algorithm2e}{#1}{#3}%
   \endgroup}
+\newcommand\newfloat@replace@chapter@[4]{%
+  \ifx\@tempa#1%
+    \newfloat@InfoNoLine{Document class `#3' detected (#2)}%
+    \global\def#1[##1]##2{#4}%
+    \global\let\newfloat@replace@chapter\newfloat@dont@replace@chapter
+    \global\let\newfloat@replace@chapter@\@gobblefour
+  \fi}
 \newcommand\newfloat@dont@replace@chapter[3]{}
 \ifcsname @chapter\endcsname \else
   \let\newfloat@replace@chapter\newfloat@dont@replace@chapter
@@ -789,6 +790,7 @@
     was already redefined by another package}
   \newfloat@InfoNoLine{\string\@chapter\space=\space\meaning\@chapter}
   \newfloat@InfoNoLine{\string\Hy@org@chapter\space=\space\meaning\Hy@org@chapter}
+  \newfloat@InfoNoLine{\string\algocf@original@chapter\space=\space\meaning\algocf@original@chapter}
   \newfloat@ifplanb{\AtBeginDocument{%
     \newfloat@InfoNoLine{Trying Plan B..}%
     \let\newfloat@addtocontents@ORI\addtocontents
