@@ -31,8 +31,9 @@
 \providecommand\DeclareRelease[3]{}
 \providecommand\DeclareCurrentRelease[2]{}
 \DeclareRelease{v1.0}{2011-10-30}{newfloat_v1.0.sty}
-\DeclareCurrentRelease{v1.1}{2013-05-12} % 1st CTAN release of v1.1
-\ProvidesPackage{newfloat}[2021/02/27 v1.1p Defining new floating environments (AR)]
+\DeclareRelease{v1.1}{2013-05-12}{newfloat_v1.1.sty}
+\DeclareCurrentRelease{v1.2}{2021-02-28}
+\ProvidesPackage{newfloat}[2021/02/28 v1.2-dev Defining new floating environments (AR)]
 \newcommand*\newfloat@Info[1]{%
   \PackageInfo{newfloat}{#1}}
 \newcommand*\newfloat@InfoNoLine[1]{%
@@ -80,8 +81,9 @@
    {\@nameuse{#2name}\nobreakspace\@nameuse{the#2}%
     \ifdefined\autodot\expandafter\autodot\fi}%
   \newfloat@capitalize\newfloat@Type{#2}%
-  \newfloat@let{#2name}{\newfloat@Type}%
-  \newfloat@def{fleg#2}{\@nameuse{#2name}}% legend naming (memoir)
+  \newfloat@let{#2name}{\newfloat@Type}%            \caption naming
+  \newfloat@def{#2autorefname}{\@nameuse{#2name}}%  \autoref naming (hyperref)
+  \newfloat@def{fleg#2}{\@nameuse{#2name}}%         \legend naming (memoir)
   \newfloat@ifundefined{flegtoc#2}{\@namedef{flegtoc#2}##1{}}%
   \ifcsname @tufte@float\endcsname
     \newenvironment{#2}[1][htbp]%

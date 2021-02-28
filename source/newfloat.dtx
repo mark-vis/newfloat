@@ -22,12 +22,12 @@
 % and the derived file newfloat.sty.
 % 
 % \fi
-% \CheckSum{1634}
+% \CheckSum{1640}
 %
 % \iffalse
 %<*driver>
 \NeedsTeXFormat{LaTeX2e}[1994/12/01]
-\ProvidesFile{newfloat.drv}[2021/02/27 v1.1 This package offers a command for defining new floating environments]
+\ProvidesFile{newfloat.drv}[2021/02/27 v1.2 This package offers a command for defining new floating environments]
 \hbadness=9999 \newcount\hbadness \hfuzz=48pt % Make TeX shut up.
 %
 \documentclass{ltxdoc}
@@ -542,12 +542,13 @@
 % Declare all supported releases.
 %    \begin{macrocode}
 \DeclareRelease{v1.0}{2011-10-30}{newfloat_v1.0.sty}
-\DeclareCurrentRelease{v1.1}{2013-05-12} % 1st CTAN release of v1.1
+\DeclareRelease{v1.1}{2013-05-12}{newfloat_v1.1.sty}
+\DeclareCurrentRelease{v1.2}{2021-02-28}
 %    \end{macrocode}
 %
 % Identify the current version of the package.
 %    \begin{macrocode}
-\ProvidesPackage{newfloat}[2021/02/27 v1.1p Defining new floating environments (AR)]
+\ProvidesPackage{newfloat}[2021/02/28 v1.2-dev Defining new floating environments (AR)]
 %    \end{macrocode}
 %
 % \begin{macro}{\newfloat@Info}
@@ -641,6 +642,7 @@
 % \changes{v1.1b}{2018/12/26}{Bugfix: Missing curly braces added}
 % \changes{v1.1c}{2019/01/10}{Bugfix: Support of \cs{autodot} fixed}
 % \changes{v1.1k}{2019/09/01}{Adapted to the \class{beamer} document class}
+% \changes{v1.2}{2021/02/28}{Definition of \cs{xxxautorefname} added}
 %  |\DeclareFloatingEnvironment|\oarg{options}\marg{environment}\oarg{name}\oarg{list name}
 %    \begin{macrocode}
 \newcommand*\DeclareFloatingEnvironment{%
@@ -684,8 +686,9 @@
 % but with first letter capitalized
 %    \begin{macrocode}
   \newfloat@capitalize\newfloat@Type{#2}%
-  \newfloat@let{#2name}{\newfloat@Type}%
-  \newfloat@def{fleg#2}{\@nameuse{#2name}}% legend naming (memoir)
+  \newfloat@let{#2name}{\newfloat@Type}%            \caption naming
+  \newfloat@def{#2autorefname}{\@nameuse{#2name}}%  \autoref naming (hyperref)
+  \newfloat@def{fleg#2}{\@nameuse{#2name}}%         \legend naming (memoir)
 %    \end{macrocode}
 % Legend name in ToC (memoir document class)
 %    \begin{macrocode}

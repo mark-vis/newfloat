@@ -4,7 +4,7 @@ ubuntu_18.04:
   image: axelsommerfeldt/texlive:ubuntu_18.04
   stage: test
   script:
-    - ./test.sh -d test/documentclass/thesis.tex -o ubuntu_18.04.xml
+    - ./test.sh -d test/fallback -d test/documentclass/thesis.tex -o ubuntu_18.04.xml
       # The thesis document class is not part of TeXlive 2017
   artifacts:
     reports:
