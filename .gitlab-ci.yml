@@ -22,15 +22,15 @@ ubuntu_20.04:
     reports:
       junit: ubuntu_20.04.xml
 
-# Latest Ubuntu (currently 20.04 + TeXlive 2020)
+# Ubuntu 22.04 + TeXlive 2022
 # https://gitlab.com/axelsommerfeldt/docker-texlive
-ubuntu_latest:
-  image: axelsommerfeldt/texlive:ubuntu_latest
+ubuntu_22.04:
+  image: axelsommerfeldt/texlive:ubuntu_22.04
   stage: test
   script:
-    - ./test.sh -d test/documentclass/thesis.tex -o ubuntu_latest.xml
-      # The thesis document class is not part of TeXlive 2020
+    - ./test.sh -d test/documentclass/thesis.tex -o ubuntu_22.04.xml
+      # The thesis document class is not part of TeXlive 2022
   artifacts:
     reports:
-      junit: ubuntu_latest.xml
+      junit: ubuntu_22.04.xml
 

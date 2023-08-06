@@ -10,22 +10,30 @@
 # 2019-09-09: Adapted to the "newfloat" package
 #
 # Needs on CentOS/Fedora: mmv perl-File-Copy-Recursive perl-HTML-FormatText* perl-WWW-Mechanize* perl-XML-TreeBuilder
-#
+
+set -e
 dist_dir=$(pwd)
 temp_dir="/tmp/newfloat"
-#
-rm -fr $temp_dir
-mkdir $temp_dir
-cp -a source/*.ins source/*.dtx $temp_dir
-cp -a tex/*.sty $temp_dir
-cp -a doc/*.pdf $temp_dir
-cp -a README CHANGELOG SUMMARY $temp_dir
-cd $temp_dir
-ctanify newfloat.ins "*.tex=source/latex/newfloat" README "CHANGELOG=doc/latex/newfloat" "SUMMARY=doc/latex/newfloat" *.pdf
-#
-if [ $? -eq 0 ]; then
-  cp -a $temp_dir/newfloat.tar.gz $dist_dir/newfloat_$(date --rfc-3339=date).tar.gz
-  cd $dist_dir
+
+./test.sh clean
+
+rm -fr "$temp_dir"
+mkdir "$temp_dir"
+cp -a source/*.ins source/*.dtx source/fallback "$temp_dir"
+cp -a tex/*.sty "$temp_dir"
+cp -a doc/*.pdf "$temp_dir"
+cp -a README CHANGELOG SUMMARY "$temp_dir"
+cd "$temp_dir"
+
+# shellcheck disable=SC2035
+if ctanify newfloat.ins \
+	"fallback/v1.0/*.dtx=source/latex/newfloat/fallback/v1.0" \
+	"fallback/v1.1/*.dtx=source/latex/newfloat/fallback/v1.1" \
+	"*.sty=tex/latex/newfloat" \
+	README "CHANGELOG=doc/latex/newfloat" "SUMMARY=doc/latex/newfloat" *.pdf
+then
+  cp -a "$temp_dir/newfloat.tar.gz" "$dist_dir/newfloat_$(date --rfc-3339=date).tar.gz"
+  cd "$dist_dir"
 
 #  ctanupload -l -p -u http://www.ctan.org/upload \
 #    --contribution=newfloat \
