@@ -4,7 +4,7 @@ The `newfloat' package
 Copyright (C) 2011-2019 Axel Sommerfeldt (axel.sommerfeldt@f-m.fm)
 
 License: LPPL = LaTeX Project Public Licence
-Maintenance Status: maintained (by Axel Sommerfeldt)
+Maintenance Status: unmaintained
 
 Home page:
   https://gitlab.com/axelsommerfeldt/newfloat
@@ -20,15 +20,9 @@ If you need help using these packages please visit:
   https://golatex.de/               (German)
   https://texwelt.de/               (German)
 
-If you think you may have found a bug in these packages,
-or want to report a suggestion for improvement, please either visit
-  https://gitlab.com/axelsommerfeldt/newfloat/issues (preferred)
-or send an e-mail to
-  axel.sommerfeldt@f-m.fm
-
 --------------------------------------------------------------------------
 
-The `newfloat' package v1.1 offers the command \DeclareFloatingEnvironment
+The `newfloat' package v1.2 offers the command \DeclareFloatingEnvironment
 for defining new floating environments which behave like the existing
 floating environments "figure" and "table".
 
