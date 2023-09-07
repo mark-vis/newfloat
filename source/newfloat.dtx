@@ -25,7 +25,7 @@
 % \iffalse
 %<*driver>
 \NeedsTeXFormat{LaTeX2e}[1994/12/01]
-\ProvidesFile{newfloat.drv}[2021/02/27 v1.2 This package offers a command for defining new floating environments]
+\ProvidesFile{newfloat.drv}[2023/09/07 v1.2 This package offers a command for defining new floating environments]
 \hbadness=9999 \newcount\hbadness \hfuzz=48pt % Make TeX shut up.
 %
 \documentclass{ltxdoc}
@@ -1428,6 +1428,14 @@
 %
 % \pagebreak[3]
 % \subsection{Patching \cs{chapter}}
+%
+% Since the \LaTeX\ team has refused to replace the hard coded |10pt| skip inside |\chapter|
+% (for lists of floating environments like |figure| or |table|)
+% with a proper interface~\footnote{I have asked David Carlisle in 2018, Frank Mittelbach in 2020, and Frank again at a later date.},
+% we need to patch |\chapter|. (Sigh!)
+%
+% And since most document class authors takes \class{article}, \class{report}, or \class{book} as template for own classes,
+% they inherit the same problem: Hard coded skips we need to replace with an interface for ourself. (Sigh!)
 %
 % \begin{macro}{\newfloat@replace@chapter}
 % \changes{v1.1f}{2019/08/25}{Parameter \meta{class name} added to macro}
