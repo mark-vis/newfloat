@@ -20,7 +20,7 @@
 % and the derived file newfloat.sty.
 % 
 % \fi
-% \CheckSum{1650}
+% \CheckSum{1665}
 %
 % \iffalse
 %<*driver>
@@ -358,9 +358,49 @@
 %   |\end{document}|
 % \end{quote}
 %
+% \pagebreak[3]
+% \section{Important notes for \LaTeX\ document class maintainers}
+%
+% If you are a maintainer of a \LaTeX\ document class and want to support this package
+% you could tell this package to keep its fingers from your definition of |\chapter| by defining
+% |\new|\-|float@dont@patch@chapter| to anything. (The content of the definition does not matter
+% since the \package{newfloat} package only checks if this macro is defined or not.)
+%
+% If |\new|\-|float@dont@patch@chapter| is defined, the \package{newfloat} package does not try to patch
+% |\chapter| but assumes that |\@add|\-|chapter|\-|lists|\-|gaps| is already used by the document class inside
+% its definition of |\chapter|, so it only needs to re-define |\@add|\-|chapter|\-|lists|\-|gaps|
+% to use the settings configured by |\De|\-|clare|\-|Float|\-|ing|\-|En|\-|vi|\-|ron|\-|ment|
+% or |\Setup|\-|Float|\-|ing|\-|En|\-|vi|\-|ron|\-|ment|.
+%
+% \medskip
+% Example code:
+% \begin{quote}
+%   |\newcommand\@chapterlistsgap{10\p@}|\\
+%   ||\\
+%   |\newcommand\@addchapterlistsgaps{%|\\
+%   |  % Add a gap to List of Figures and List of Tables|\\
+%   |  % (This macro will be re-defined if the newfloat package|\\
+%   |  %  is loaded by the user later on.)|\\
+%   |  \addtocontents{lof}{\protect\addvspace{\@chapterlistsgap}}%|\\
+%   |  \addtocontents{lot}{\protect\addvspace{\@chapterlistsgap}}%|\\
+%   |}|\\
+%   ||\\
+%   |\newcommand\chapter{%|\\
+%   |  |\ldots\\
+%   |  \secdef\@chapter\@schapter}|\\
+%   |\def\@chapter[#1]#2{%|\\
+%   |  |\ldots\\
+%   |  \@addchapterlistsgaps|\\
+%   |  |\ldots\\
+%   |}|\\
+%   ||\\
+%   |% Hey newfloat package, don't patch my \chapter!|\\
+%   |\def\newfloat@dont@patch@chapter{}|
+% \end{quote}
+%
 % \iffalse
 % \pagebreak[3]
-% \section{For \LaTeX{} package authors}
+% \section{Notes for \LaTeX{} package authors}
 %
 % |\For|\-|Each|\-|Floating|\-|Environment| without \package{newfloat} package:
 % \begin{quote}
@@ -1315,8 +1355,14 @@
 % \begin{macro}{\@addchapterlistsgaps}
 % \changes{v1.0b}{2012/05/18}{Bugfix: Group added to make \cs{@addchapterlistsgap} work correctly}
 % \changes{v1.1n}{2021/02/27}{Uses \cs{newfloat@ext} now instead of \cs{ext@xxx}}
+% \changes{v1.2}{2023/10/01}{A previous definition of this macro will be overwritten if \cs{newfloat@dont@patch@chapter} is defined}
 % |\@addchapterlistsgaps|\par
 % will add the chapter lists gaps for all floating environments in |\newfloat@list|.
+%    \begin{macrocode}
+  \ifcsname newfloat@dont@patch@chapter\endcsname
+    \let\@addchapterlistsgaps\@undefined % force a re-definition
+  \fi
+%    \end{macrocode}
 %    \begin{macrocode}
   \providecommand*\@addchapterlistsgaps{%
     \begingroup
@@ -1502,6 +1548,19 @@
 %    \end{macrocode}
 %    \begin{macrocode}
 \ifcsname @chapter\endcsname \else
+  \let\newfloat@replace@chapter\newfloat@dont@replace@chapter
+\fi
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\newfloat@dont@patch@chapter}
+% \changes{v1.2}{2023/10/01}{Detection of this macro added}
+% If |\newfloat@dont@patch@chapter| is defined, we don't try to patch |\chapter|
+% but assume that the document class is already using |\@add|\-|chapter|\-|lists|\-|gaps|
+% inside its definition of |\chapter|.
+%    \begin{macrocode}
+\ifcsname newfloat@dont@patch@chapter\endcsname
+  \newfloat@InfoNoLine{\noexpand\newfloat@dont@patch@chapter is set}
   \let\newfloat@replace@chapter\newfloat@dont@replace@chapter
 \fi
 %    \end{macrocode}

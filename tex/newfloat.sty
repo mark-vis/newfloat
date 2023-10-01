@@ -362,6 +362,9 @@
     \ifdim \@chapterlistsgap>\z@
       \addtocontents{#1}{\protect\addvspace{\@chapterlistsgap}}%
     \fi}
+  \ifcsname newfloat@dont@patch@chapter\endcsname
+    \let\@addchapterlistsgaps\@undefined % force a re-definition
+  \fi
   \providecommand*\@addchapterlistsgaps{%
     \begingroup
       \def\@elt##1{%
@@ -440,6 +443,10 @@
   \fi}
 \newcommand\newfloat@dont@replace@chapter[3]{}
 \ifcsname @chapter\endcsname \else
+  \let\newfloat@replace@chapter\newfloat@dont@replace@chapter
+\fi
+\ifcsname newfloat@dont@patch@chapter\endcsname
+  \newfloat@InfoNoLine{\noexpand\newfloat@dont@patch@chapter is set}
   \let\newfloat@replace@chapter\newfloat@dont@replace@chapter
 \fi
 \newfloat@replace@chapter{report}{%
