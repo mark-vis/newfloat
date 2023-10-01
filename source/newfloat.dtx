@@ -68,11 +68,11 @@
 % \newcommand*\purerm[1]{{\upshape\mdseries\rmfamily #1}}
 % \newcommand*\puresf[1]{{\upshape\mdseries\sffamily #1}}
 % \newcommand*\purett[1]{{\upshape\mdseries\ttfamily #1}}
-% \let\class\puresf \let\package\puresf
+% \let\cls\puresf \let\pkg\puresf
 % \let\env\purett \let\opt\purett
 %
-% \def\thispackage{the \package{newfloat} package}
-% \def\Thispackage{The \package{newfloat} package}
+% \def\thispackage{the \pkg{newfloat} package}
+% \def\Thispackage{The \pkg{newfloat} package}
 % 
 % \newcommand*\csmarg[1]{\texttt{\char`\{#1\char`\}}}
 % \newcommand*\csoarg[1]{\texttt{\char`\[#1\char`\]}}
@@ -160,8 +160,8 @@
 %   |fileext=| & \meta{file extension}\\
 %   |listname=| & \meta{list name}\\
 %   |name=| & \meta{prosa name}\\
-%   |autorefname=| & \meta{name used in \cs{autoref} offered by \package{hyperref}}\\
-%   |legendname=| & \meta{name used in \cs{legend} offered by \class{memoir}}\\
+%   |autorefname=| & \meta{name used in \cs{autoref} offered by \pkg{hyperref}}\\
+%   |legendname=| & \meta{name used in \cs{legend} offered by \cls{memoir}}\\
 %   |placement=| & \meta{combination of \,\purett{htbp}}\\
 %   |within=| & \meta{``within'' counter} \emph{or} \texttt{none}\\
 %   |chapterlistsgaps=| & \texttt{on} \emph{or} \texttt{off}~\footnotemark[1]
@@ -190,10 +190,10 @@
 % resp.~|\list|\-|of|\meta{type}|es|,
 % analogous to |\list|\-|of|\-|figures| and |\list|\-|of|\-|tables|.
 %
-% If the \package{fltpage} package is loaded, an environment called
+% If the \pkg{fltpage} package is loaded, an environment called
 % |FP|\meta{type} will be defined additionally, same for |sideways|\meta{type}
-% (\package{rotating} package), |SC|\meta{type} (\package{sidecap} package),
-% and |wrap|\meta{type} (\package{wrapfig} package).
+% (\pkg{rotating} package), |SC|\meta{type} (\pkg{sidecap} package),
+% and |wrap|\meta{type} (\pkg{wrapfig} package).
 % 
 % \bigskip
 % 
@@ -234,9 +234,9 @@
 % \end{quote}
 % will change the settings of existing ones, i.e. either |figure| or |table|,
 % or a one created with |\Declare|\-|Floating|\-|Environment|,
-% or a one created with |\new|\-|float| offered by the \package{float} package,
-% or a one created with |\new|\-|float| offered by the \package{memoir} document class,
-% or a one created with |\Declare|\-|New|\-|Float|\-|Type| offered by the \package{floatrow} package,
+% or a one created with |\new|\-|float| offered by the \pkg{float} package,
+% or a one created with |\new|\-|float| offered by the \pkg{memoir} document class,
+% or a one created with |\Declare|\-|New|\-|Float|\-|Type| offered by the \pkg{floatrow} package,
 % or a one created by a document class or any other package.
 %
 % The \meta{options} are the same as the options for
@@ -254,7 +254,7 @@
 %   |\SetupFloatingEnvironment{lstlisting}{chapterlistsgaps=off}|
 % \end{quote}
 % will switch off the chapter lists gaps for |lstlisting| environments
-% offered by the \package{listings} package.
+% offered by the \pkg{listings} package.
 %
 % \pagebreak[3]
 % \section{\cs{ForEachFloatingEnvironment}}
@@ -266,7 +266,7 @@
 % and for ones defined with |\Declare|\-|Floating|\-|Environment| later on.
 %
 % \pagebreak[3]
-% So for example the \package{subcaption} packages uses
+% So for example the \pkg{subcaption} packages uses
 % \begin{quote}
 %  |\ForEachFloatingEnvironment{\DeclareCaptionSubType{#1}}|
 % \end{quote}
@@ -323,11 +323,11 @@
 %   |  \renewcommand{\cftfigpresnum}{Diagram~}}|
 % \end{quote}
 % will change the part typeset in front of the diagram number within the
-% ``List of Diagrams'' when using the \package{tocloft} package~\cite{tocloft}.
+% ``List of Diagrams'' when using the \pkg{tocloft} package~\cite{tocloft}.
 % Without the code above you will get the part defined for figures instead.
 %
 % \pagebreak[3]
-% However, when dealing with the \package{tocloft} package it's a better
+% However, when dealing with the \pkg{tocloft} package it's a better
 % idea not to use |\Prepare|\-|List|\-|Of| but the customization facilities of that package
 % instead, e.g.:
 % \begin{quote}
@@ -363,7 +363,7 @@
 %
 % The options \opt{name=} etc.~will set names for the current language only.
 % If support for multiple languages is needed, the command |\addto\captions|\meta{language}
-% offered by the \package{babel} package needs to be used to set names for all the different languages.
+% offered by the \pkg{babel} package needs to be used to set names for all the different languages.
 %
 % These are the corresponding command names:
 %
@@ -421,9 +421,9 @@
 % If you are a maintainer of a \LaTeX\ document class and want to support this package
 % you could tell this package to keep its fingers from your definition of |\chapter| by defining
 % |\new|\-|float@dont@patch@chapter| to anything. (The content of the definition does not matter
-% since the \package{newfloat} package only checks if this macro is defined or not.)
+% since the \pkg{newfloat} package only checks if this macro is defined or not.)
 %
-% If |\new|\-|float@dont@patch@chapter| is defined, the \package{newfloat} package does not try to patch
+% If |\new|\-|float@dont@patch@chapter| is defined, the \pkg{newfloat} package does not try to patch
 % |\chapter| but assumes that |\@add|\-|chapter|\-|lists|\-|gaps| is already used by the document class inside
 % its definition of |\chapter|, so it only needs to re-define |\@add|\-|chapter|\-|lists|\-|gaps|
 % to use the settings configured by |\De|\-|clare|\-|Float|\-|ing|\-|En|\-|vi|\-|ron|\-|ment|
@@ -461,7 +461,7 @@
 % \pagebreak[3]
 % \section{Notes for \LaTeX{} package authors}
 %
-% |\For|\-|Each|\-|Floating|\-|Environment| without \package{newfloat} package:
+% |\For|\-|Each|\-|Floating|\-|Environment| without \pkg{newfloat} package:
 % \begin{quote}
 %   |\newcommand\mypackage@foreachfloat[1]{%|\\
 %   |  \@ifundefined{ForEachFloatingEnvironment}%|\\
@@ -483,7 +483,7 @@
 % \begin{quote}
 %   |\SetupFloatingEnvironment|\marg{environment}|{}|
 % \end{quote}
-% or (without \package{newfloat} package loaded):
+% or (without \pkg{newfloat} package loaded):
 % \begin{quote}
 %   |\providecommand\newfloat@list{}|\\
 %   |\@cons\newfloat@list{|\marg{environment}|}|
@@ -607,11 +607,11 @@
 % \fi
 %
 % \setlength{\parskip}{0pt plus 1pt}
-% \changes{v1.0}{2011/10/30}{First release as \package{newfloat} package,
-%       outsourced from the \package{caption3} package and revised}
-% \changes{v1.1}{2013/04/27}{Adapted to the \package{tocloft} package}
+% \changes{v1.0}{2011/10/30}{First release as \pkg{newfloat} package,
+%       outsourced from the \pkg{caption3} package and revised}
+% \changes{v1.1}{2013/04/27}{Adapted to the \pkg{tocloft} package}
 % \changes{v1.1}{2013/04/27}{New command \cs{PrepareListOf} added}
-% \changes{v1.1d}{2019/03/16}{Adapted to the \package{dgruyter} package}
+% \changes{v1.1d}{2019/03/16}{Adapted to the \pkg{dgruyter} package}
 %
 % \iffalse
 % --------------------------------------------------------------------------- %
@@ -690,7 +690,7 @@
 % \pagebreak[3]
 % \subsection{Using the keyval package}
 %
-% We need the \package{keyval} package for option handling, so we load it here.
+% We need the \pkg{keyval} package for option handling, so we load it here.
 %    \begin{macrocode}
 \RequirePackage{keyval}[1997/11/10]
 %    \end{macrocode}
@@ -737,10 +737,10 @@
 % \changes{v1.1}{2013/04/27}{Revised, only defines stuff yet undefined now}
 % \changes{v1.1}{2013/11/03}{Uses \cs{newfloat@capitalize} now}
 % \changes{v1.1}{2015/09/16}{Support of \cs{autodot} (offered by the \KOMAScript\ classes) added}
-% \changes{v1.1}{2018/03/04}{Usage of \cs{ifdefined} replaced by \cs{@ifundefined} to improve compatibility with the \package{listings} package}
+% \changes{v1.1}{2018/03/04}{Usage of \cs{ifdefined} replaced by \cs{@ifundefined} to improve compatibility with the \pkg{listings} package}
 % \changes{v1.1b}{2018/12/26}{Bugfix: Missing curly braces added}
 % \changes{v1.1c}{2019/01/10}{Bugfix: Support of \cs{autodot} fixed}
-% \changes{v1.1k}{2019/09/01}{Adapted to the \class{beamer} document class}
+% \changes{v1.1k}{2019/09/01}{Adapted to the \cls{beamer} document class}
 % \changes{v1.2}{2021/02/28}{Definition of \cs{xxxautorefname} added}
 %  |\DeclareFloatingEnvironment|\oarg{options}\marg{environment}\oarg{name}\oarg{list name}
 %    \begin{macrocode}
@@ -794,10 +794,10 @@
   \newfloat@ifundefined{flegtoc#2}{\@namedef{flegtoc#2}##1{}}%
 %    \end{macrocode}
 % Define the floating environment\par
-% If the \class{tufte} document class is loaded,
+% If the \cls{tufte} document class is loaded,
 % |\@tufte@float| and |\end@tufte@float| will be used instead of
 % |\@float|, |\end@float|, |\@dblfloat|, and |\end@dblfloat|.\par
-% If the \class{beamer} document class is loaded,
+% If the \cls{beamer} document class is loaded,
 % |\beamer@float| and |\end@beamer@float| will be used.
 %    \begin{macrocode}
   \ifcsname @tufte@float\endcsname
@@ -832,8 +832,8 @@
   \newfloat@let{list#2name}{\newfloat@tempa}%
 %    \end{macrocode}
 % We undefine |\fst@|\meta{environment} so the new environment
-% will not be recognized as defined by the \package{float} package.
-% (|\fst@|\meta{type} use to hold the float style, see \package{float} package
+% will not be recognized as defined by the \pkg{float} package.
+% (|\fst@|\meta{type} use to hold the float style, see \pkg{float} package
 % implementation for details.)
 %    \begin{macrocode}
   \expandafter\let\csname fst@#2\endcsname\@undefined
@@ -1020,7 +1020,7 @@
 % \begin{macro}{\newfloat@setautorefname}
 % \changes{v1.2}{2023/10/01}{This macro and corresponding option \opt{autorefname=} added}
 % |\newfloat@setautorefname|\marg{environment}\marg{autoref name}\par
-% This name is used in |\autoref| offered by the \package{hyperref} package.
+% This name is used in |\autoref| offered by the \pkg{hyperref} package.
 %    \begin{macrocode}
 \newcommand*\newfloat@setautorefname[2]{%
   \@namedef{#1autorefname}{#2}}
@@ -1034,7 +1034,7 @@
 % \begin{macro}{\newfloat@setlegendname}
 % \changes{v1.2}{2023/10/01}{This macro and corresponding option \opt{legendname=} added}
 % |\newfloat@setlegendname|\marg{environment}\marg{legend name}
-% This name is used in |\legend| offered by the \class{memoir} document class.
+% This name is used in |\legend| offered by the \cls{memoir} document class.
 %    \begin{macrocode}
 \newcommand*\newfloat@setlegendname[2]{%
   \@namedef{fleg#1}{#2}}
@@ -1103,10 +1103,10 @@
     \fi
   \fi}
 %    \end{macrocode}
-% Note: Since the \package{hyperref} package with version $<$ 6.82k defines
+% Note: Since the \pkg{hyperref} package with version $<$ 6.82k defines
 % |\the|\-|H|\-|figure| and |\the|\-|H|\-|table| with |\new|\-|command|,
 % |\newfloat@@setwithin| will yield to an error message when using with an
-% old version of \package{hyperref},
+% old version of \pkg{hyperref},
 % e.g. ``\texttt{LaTeX Error: Command \cs{theHfigure} already defined}''.
 %    \begin{macrocode}
 \newcommand*\newfloat@@setwithin[3]{%
@@ -1165,7 +1165,7 @@
 % \end{macro}
 %
 % \begin{macro}{\@removefromreset}
-% This code was taken from the \package{remreset} package
+% This code was taken from the \pkg{remreset} package
 % which is part of the `carlisle' package bundle.
 % (Copyright 1997 David Carlisle)
 %    \begin{macrocode}
@@ -1195,7 +1195,7 @@
   \newfloat@ifundefined{newfloat@env@#2}{%
     \@namedef{newfloat@env@#2}{#1}%
 %    \end{macrocode}
-% Support of \package{memoir} document class
+% Support of \pkg{memoir} document class
 %    \begin{macrocode}
     \ifcsname c@lofdepth\endcsname
       \newfloat@ifundefined{c@#2depth}{%
@@ -1203,7 +1203,7 @@
         \setcounter{#2depth}{1}}%
     \fi
 %    \end{macrocode}
-% Support of \package{tocbasic} package
+% Support of \pkg{tocbasic} package
 %    \begin{macrocode}
     \ifcsname addtotoclist\endcsname
       \addtotoclist[float]{#2}%
@@ -1213,7 +1213,7 @@
 %    \begin{macrocode}
   }%
 %    \end{macrocode}
-% Support of \package{titletoc} package
+% Support of \pkg{titletoc} package
 %    \begin{macrocode}
   \ifcsname contentsuse\endcsname
     \contentsuse{#1}{#2}%
@@ -1282,7 +1282,7 @@
 % adds code to the hook called in |\Declare|\-|Floating|\-|Environment|.\par
 % Note: We use |\provide|\-|command| instead of |\new|\-|command| here since the
 % exact same code is defined for |\For|\-|Each|\-|Caption|\-|Type| offered by
-% the \package{caption3} package.
+% the \pkg{caption3} package.
 %    \begin{macrocode}
 \providecommand\newfloat@addtohook[1]{%
   \toks@=\expandafter{\newfloat@hook{##1}#1}%
@@ -1383,7 +1383,7 @@
 %    \begin{macrocode}
   \providecommand*\@chapterlistsgap{10\p@}%
 %    \end{macrocode}
-% If the \package{dgruyter} package is loaded, the default gap is |13pt|.
+% If the \pkg{dgruyter} package is loaded, the default gap is |13pt|.
 %    \begin{macrocode}
   \@ifpackageloaded{dgruyter}{\renewcommand*\@chapterlistsgap{13\p@}}{}%
 %    \end{macrocode}
@@ -1437,7 +1437,7 @@
 % |\@chapterlistsgap@off|\marg{float type}\par
 % switches the chapter lists gap off for the given float type.
 % Since \KOMAScript{} (still) supports |\float@exts| we need to handle
-% this locally, too, even if |\unsettoc| is offered by the \package{tocbasic} package.
+% this locally, too, even if |\unsettoc| is offered by the \pkg{tocbasic} package.
 % (Otherwise our handling could be moved into the |\else| branch.)
 %    \begin{macrocode}
   \providecommand*\@chapterlistsgap@off[1]{%
@@ -1569,17 +1569,17 @@
 % with a proper interface~\footnote{I have asked David Carlisle in 2018, Frank Mittelbach in 2020, and Frank again at a later date.},
 % we need to patch |\chapter|. (Sigh!)
 %
-% And since most document class authors takes \class{article}, \class{report}, or \class{book} as template for own classes,
+% And since most document class authors takes \cls{article}, \cls{report}, or \cls{book} as template for own classes,
 % they inherit the same problem: Hard coded skips we need to replace with an interface for ourself. (Sigh!)
 %
 % \begin{macro}{\newfloat@replace@chapter}
 % \changes{v1.1f}{2019/08/25}{Parameter \meta{class name} added to macro}
 % \changes{v1.1i}{2019/08/31}{Local definition of \cs{if@chapnum} added}
-% \changes{v1.1o}{2021/02/27}{Support of the \package{algorithm2e} package added}
+% \changes{v1.1o}{2021/02/27}{Support of the \pkg{algorithm2e} package added}
 %   |\newfloat@replace@chapter|\marg{class name}\marg{original code}\marg{replacement code}\par
 %   tries to patch |\@chapter| so |\@add|\-|chapter|\-|lists|\-|gaps| will be supported.
 %   It checks for |\Hy@org@chapter|, too, since the original code will be stored here
-%   if the \package{hyperref} package was loaded.
+%   if the \pkg{hyperref} package was loaded.
 %    \begin{macrocode}
 \newcommand\newfloat@replace@chapter[3]{%
   \begingroup
@@ -1748,7 +1748,7 @@
 % \pagebreak[3]
 % \subsubsection{\KOMAScript{} document classes}
 %
-% If a \KOMAScript{} document class or the \package{tocbasic} package is used
+% If a \KOMAScript{} document class or the \pkg{tocbasic} package is used
 % we don't need to patch anything.
 % Instead we use |\setup|\-|toc| and |\un|\-|set|\-|toc| to setup the
 % chapters gap in |\@chapter|\-|lists|\-|gap@on| and |\@chapter|\-|lists|\-|gap@off|.
@@ -1760,7 +1760,7 @@
 % \pagebreak[3]
 % \subsubsection{memoir document classes}
 %
-% If the \package{memoir} document class is used,
+% If the \pkg{memoir} document class is used,
 % replacing |\insert|\-|chapter|\-|space| by |\@add|\-|chapter|\-|lists|\-|gaps| is sufficient.
 %    \begin{macrocode}
 \ifcsname insertchapterspace\endcsname
@@ -1931,7 +1931,7 @@
 %
 % \pagebreak[3]
 % \subsubsection{The Springer Verlag document classes}
-% \changes{v1.1f}{2019/08/25}{Support of \package{svmono} and \package{svmult} document classes added}
+% \changes{v1.1f}{2019/08/25}{Support of \pkg{svmono} and \pkg{svmult} document classes added}
 %
 %    \begin{macrocode}
 % svmono.cls [2018/06/25 v5.6 Springer Verlag global LaTeX document class for monographs]
@@ -1983,7 +1983,7 @@
 %
 % \pagebreak[3]
 % \subsubsection{The dgruyter package}
-% \changes{v1.1j}{2019/08/31}{Extended support of \package{dgruyter} package added}
+% \changes{v1.1j}{2019/08/31}{Extended support of \pkg{dgruyter} package added}
 %
 %    \begin{macrocode}
 % dgruyter.sty [2017/09/19 v2.00 De Gruyter layout]
@@ -2074,7 +2074,7 @@
 %    \end{macrocode}
 % Plan B: We patch |\add|\-|to|\-|contents| instead, and keep our fingers crossed
 % in the hope that this redefinition actually will fit.
-% (Note: Since \package{biblatex} patches |\add|\-|to|\-|contents| as well we do
+% (Note: Since \pkg{biblatex} patches |\add|\-|to|\-|contents| as well we do
 % this using |\At||Begin||Document|.)
 % \changes{v1.1f}{2019/08/25}{Plan B will now be done using \cs{AtBeginDocument}}
 %    \begin{macrocode}
@@ -2112,7 +2112,7 @@
 %
 % \begin{macro}{\beamer@float}
 % \changes{v1.1k}{2019/09/01}{This macro added}
-% Unfortunately the \class{beamer} document class does not offer
+% Unfortunately the \cls{beamer} document class does not offer
 % |\beamer@float| and |\end@beamer@float| (yet), so we have to define them
 % for ourself.
 % (This code was taken from beamerbaselocalstructure.sty [2019/07/23 v3.56] and adapted.)
@@ -2186,7 +2186,7 @@
 % \end{macro}
 %
 % \pagebreak[3]
-% \subsubsection{\package{dgruyter}}
+% \subsubsection{\pkg{dgruyter}}
 %
 % The De Gruyter layout package (for preparing books for Walter de Gruyter GmbH)
 % is defining |\plist@figure| and |\plist@table|, and expects this to be
@@ -2199,9 +2199,9 @@
 %    \end{macrocode}
 %
 % \pagebreak[3]
-% \subsubsection{\package{float}}
+% \subsubsection{\pkg{float}}
 %
-% If the \package{float} package is used we fill up |\float@exts| with our file
+% If the \pkg{float} package is used we fill up |\float@exts| with our file
 % extensions, too. Since this list will be used for inserting chapters gaps
 % we only add the ones which are configured for chapters gaps on.\par
 % Note: This has to be done |\At|\-|Begin|\-|Document| so the settings for
@@ -2219,7 +2219,7 @@
 %    \end{macrocode}
 %
 % \pagebreak[3]
-% \subsubsection{\package{fltpage}}
+% \subsubsection{\pkg{fltpage}}
 %
 % We define a FP-variant of new floating environments here.
 %    \begin{macrocode}
@@ -2229,10 +2229,10 @@
 %    \end{macrocode}
 %
 % \pagebreak[3]
-% \subsubsection{\package{listings}}
+% \subsubsection{\pkg{listings}}
 %
 % \begin{macro}{\ext@lstlisting}
-% Since the \package{listings} package do not define |\ext@lst|\-|listing|
+% Since the \pkg{listings} package do not define |\ext@lst|\-|listing|
 % but we needed it when |Setup|\-|Floating|\-|Environment{lst|\-|listing}{|\ldots|}|
 % will be done by the end user, we define it here.
 %    \begin{macrocode}
@@ -2241,7 +2241,7 @@
 % \end{macro}
 %
 % \pagebreak[3]
-% \subsubsection{\package{rotating}}
+% \subsubsection{\pkg{rotating}}
 %
 % We define a sideways-variant of new floating environments here.
 %    \begin{macrocode}
@@ -2251,7 +2251,7 @@
 %    \end{macrocode}
 %
 % \pagebreak[3]
-% \subsubsection{\package{sidecap}}
+% \subsubsection{\pkg{sidecap}}
 %
 % We define a SC-variant of new floating environments here.
 % \begin{macro}{\SC@float}
@@ -2272,7 +2272,7 @@
 % \end{macro}
 %
 % \pagebreak[3]
-% \subsubsection{\package{wrapfig}}
+% \subsubsection{\pkg{wrapfig}}
 %
 % We define a wrap-variant of new floating environments here.
 %    \begin{macrocode}
