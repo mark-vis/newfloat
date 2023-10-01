@@ -6,7 +6,7 @@
 %%
 %% newfloat.dtx  (with options: `package')
 %% 
-%% Copyright (C) 2011-2021 Axel Sommerfeldt (axel.sommerfeldt@f-m.fm)
+%% Copyright (C) 2011-2023 Axel Sommerfeldt (axel.sommerfeldt@f-m.fm)
 %% 
 %% https://gitlab.com/axelsommerfeldt/newfloat
 %% 
@@ -30,8 +30,8 @@
 \providecommand\DeclareCurrentRelease[2]{}
 \DeclareRelease{v1.0}{2011-10-30}{newfloat_v1.0.sty}
 \DeclareRelease{v1.1}{2013-05-12}{newfloat_v1.1.sty}
-\DeclareCurrentRelease{v1.2}{2021-02-28}
-\ProvidesPackage{newfloat}[2021/02/28 v1.2-dev Defining new floating environments (AR)]
+\DeclareCurrentRelease{v1.2}{2023-10-01}
+\ProvidesPackage{newfloat}[2023/10/01 v1.2-dev Defining new floating environments (AR)]
 \newcommand*\newfloat@Info[1]{%
   \PackageInfo{newfloat}{#1}}
 \newcommand*\newfloat@InfoNoLine[1]{%
@@ -191,6 +191,14 @@
   \@namedef{#1name}{#2}}
 \define@key{@newfloat}{name}{%
   \newfloat@setoption{name}{#1}}
+\newcommand*\newfloat@setautorefname[2]{%
+  \@namedef{#1autorefname}{#2}}
+\define@key{@newfloat}{autorefname}{%
+  \newfloat@setoption{autorefname}{#1}}
+\newcommand*\newfloat@setlegendname[2]{%
+  \@namedef{fleg#1}{#2}}
+\define@key{@newfloat}{legendname}{%
+  \newfloat@setoption{legendname}{#1}}
 \newcommand*\newfloat@setplacement[2]{%
   \@namedef{fps@#1}{#2}}
 \define@key{@newfloat}{placement}{%

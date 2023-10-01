@@ -2,7 +2,7 @@
 % 
 % This is file `newfloat.dtx'.
 % 
-% Copyright (C) 2011-2021 Axel Sommerfeldt (axel.sommerfeldt@f-m.fm)
+% Copyright (C) 2011-2023 Axel Sommerfeldt (axel.sommerfeldt@f-m.fm)
 % 
 % --------------------------------------------------------------------------
 % 
@@ -20,12 +20,12 @@
 % and the derived file newfloat.sty.
 % 
 % \fi
-% \CheckSum{1640}
+% \CheckSum{1650}
 %
 % \iffalse
 %<*driver>
 \NeedsTeXFormat{LaTeX2e}[1994/12/01]
-\ProvidesFile{newfloat.drv}[2023/09/07 v1.2 This package offers a command for defining new floating environments]
+\ProvidesFile{newfloat.drv}[2023/10/01 v1.2 This package offers a command for defining new floating environments]
 \hbadness=9999 \newcount\hbadness \hfuzz=48pt % Make TeX shut up.
 %
 \documentclass{ltxdoc}
@@ -160,6 +160,8 @@
 %   |fileext=| & \meta{file extension}\\
 %   |listname=| & \meta{list name}\\
 %   |name=| & \meta{prosa name}\\
+%   |autorefname=| & \meta{name used in \cs{autoref} offered by \package{hyperref}}\\
+%   |legendname=| & \meta{name used in \cs{legend} offered by \class{memoir}}\\
 %   |placement=| & \meta{combination of \,\purett{htbp}}\\
 %   |within=| & \meta{``within'' counter} \emph{or} \texttt{none}\\
 %   |chapterlistsgaps=| & \texttt{on} \emph{or} \texttt{off}~\footnotemark[1]
@@ -173,7 +175,7 @@
 % If no \meta{options} are given,
 % ``lo\meta{type}'' will be used as \meta{file extension} for the list,
 % ``List of \meta{name}s'' as \meta{list name}.
-% ``\meta{name}'' as \meta{name} (but with the first letter capitalized),
+% ``\meta{name}'' as \meta{name}, \meta{autoref name}, and \meta{legend name} (but with the first letter capitalized),
 % ``|tbp|'' as \meta{placement} specifier,
 % and ``|chapter|'' resp. ``|none|'' as \meta{``within'' counter},
 % i.e., the counter which resets the numbering.
@@ -235,7 +237,7 @@
 % or a one created with |\new|\-|float| offered by the \package{float} package,
 % or a one created with |\new|\-|float| offered by the \package{memoir} document class,
 % or a one created with |\Declare|\-|New|\-|Float|\-|Type| offered by the \package{floatrow} package,
-% or \ldots
+% or a one created by a document class or any other package.
 %
 % The \meta{options} are the same as the options for
 % |\Declare|\-|Floating|\-|Environment|,
@@ -541,12 +543,12 @@
 %    \begin{macrocode}
 \DeclareRelease{v1.0}{2011-10-30}{newfloat_v1.0.sty}
 \DeclareRelease{v1.1}{2013-05-12}{newfloat_v1.1.sty}
-\DeclareCurrentRelease{v1.2}{2021-02-28}
+\DeclareCurrentRelease{v1.2}{2023-10-01}
 %    \end{macrocode}
 %
 % Identify the current version of the package.
 %    \begin{macrocode}
-\ProvidesPackage{newfloat}[2021/02/28 v1.2-dev Defining new floating environments (AR)]
+\ProvidesPackage{newfloat}[2023/10/01 v1.2-dev Defining new floating environments (AR)]
 %    \end{macrocode}
 %
 % \begin{macro}{\newfloat@Info}
@@ -913,6 +915,34 @@
 %    \begin{macrocode}
 \define@key{@newfloat}{name}{%
   \newfloat@setoption{name}{#1}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\newfloat@setautorefname}
+% \changes{v1.2}{2023/10/01}{This macro and corresponding option \opt{autorefname=} added}
+% |\newfloat@setautorefname|\marg{environment}\marg{autoref name}\par
+% This name is used in |\autoref| offered by the \package{hyperref} package.
+%    \begin{macrocode}
+\newcommand*\newfloat@setautorefname[2]{%
+  \@namedef{#1autorefname}{#2}}
+%    \end{macrocode}
+%    \begin{macrocode}
+\define@key{@newfloat}{autorefname}{%
+  \newfloat@setoption{autorefname}{#1}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\newfloat@setlegendname}
+% \changes{v1.2}{2023/10/01}{This macro and corresponding option \opt{legendname=} added}
+% |\newfloat@setlegendname|\marg{environment}\marg{legend name}
+% This name is used in |\legend| offered by the \class{memoir} document class.
+%    \begin{macrocode}
+\newcommand*\newfloat@setlegendname[2]{%
+  \@namedef{fleg#1}{#2}}
+%    \end{macrocode}
+%    \begin{macrocode}
+\define@key{@newfloat}{legendname}{%
+  \newfloat@setoption{legendname}{#1}}
 %    \end{macrocode}
 % \end{macro}
 %

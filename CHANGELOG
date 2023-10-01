@@ -11,3 +11,7 @@ v1.0 (2011/10/30)
 v1.1 (2013/04/27)
 - New command \PrepareListOf
 
+v1.2 (2023/10/01)
+- \DeclareFloatingEnvironment now defines a name for \autoref, too
+- New options "autorefname=" (for hyperref) and "legendname=" (for memoir)
+
