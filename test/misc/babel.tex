@@ -1,0 +1,49 @@
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[french,german,english]{babel}
+\usepackage{newfloat}
+
+\DeclareFloatingEnvironment{diagram}
+% Set names for the English language
+\addto\captionsenglish{%
+  \renewcommand\diagramname{Diagram}%
+  \renewcommand\listdiagramname{List of Diagrams}%
+}
+% Set names for the French language
+\addto\captionsfrench{%
+  \renewcommand\diagramname{Diagramme}%
+  \renewcommand\listdiagramname{Liste des diagrammes}%
+}
+% Set names for the German language
+\addto\captionsgerman{%
+  \renewcommand\diagramname{Diagramm}%
+  \renewcommand\listdiagramname{Liste der Diagramme}%
+}
+
+\begin{document}
+
+\listofdiagrams
+
+\begin{diagram}[!ht]
+\caption{A diagram}
+\end{diagram}
+
+\clearpage
+\selectlanguage{french}
+\listofdiagrams
+
+\begin{diagram}[!ht]
+\caption{Un diagramme}
+\end{diagram}
+
+\clearpage
+\selectlanguage{german}
+\listofdiagrams
+
+\begin{diagram}[!ht]
+\caption{Ein Diagramm}
+\end{diagram}
+
+\end{document}
+

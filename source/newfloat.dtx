@@ -359,6 +359,63 @@
 % \end{quote}
 %
 % \pagebreak[3]
+% \section{Multi-language support}
+%
+% The options \opt{name=} etc.~will set names for the current language only.
+% If support for multiple languages is needed, the command |\addto\captions|\meta{language}
+% offered by the \package{babel} package needs to be used to set names for all the different languages.
+%
+% These are the corresponding command names:
+%
+% \nobreak\medskip\nobreak\noindent
+% \begin{minipage}{\linewidth}
+%   \centering
+%   \begin{tabular}{lll}
+%     Option             & Command                      & Description \\
+%   \hline
+%     \opt{listname=}    & |\list|\meta{float}|name|    & Heading of the list \\
+%     \opt{name=}        & |\|\meta{float}|name|        & Name used in |\caption| \\
+%     \opt{autorefname=} & |\|\meta{float}|autorefname| & Name used in |\autoref| \\
+%     \opt{legendname=}  & |\fleg|\meta{float}          & Name used in |\legend| \\
+%   \end{tabular}
+% \end{minipage}
+%
+% \medskip
+%
+% \pagebreak[3]
+% Example code:
+% \nobreak\begin{quote}
+%   |\documentclass{book}|\\
+%   \ldots\\
+%   |\usepackage[T1]{fontenc}|\\
+%   |\usepackage[english,french,german]{babel}|\\
+%   \ldots\\
+%   |\usepackage{newfloat}|\\
+%   |\DeclareFloatingEnvironment{diagram}|\\
+%   |% Set names for the English language|\\
+%   |\addto\captionsenglish{%|\\
+%   |  \renewcommand\diagramname{Diagram}%|\\
+%   |  \renewcommand\listdiagramname{List of Diagrams}%|\\
+%   |}|\\
+%   |% Set names for the French language|\\
+%   |\addto\captionsfrench{%|\\
+%   |  \renewcommand\diagramname{Diagramme}%|\\
+%   |  \renewcommand\listdiagramname{Liste des diagrammes}%|\\
+%   |}|\\
+%   |% Set names for the German language|\\
+%   |\addto\captionsgerman{%|\\
+%   |  \renewcommand\diagramname{Diagramm}%|\\
+%   |  \renewcommand\listdiagramname{Liste der Diagramme}%|\\
+%   |}|\\
+%   \ldots
+% \end{quote}
+%
+% \pagebreak[3]
+% \emph{Note:}
+% As default the names for |\autoref| and |\legend| point to the one used for captions,
+% so these names only need to be set if they should differ from it.
+%
+% \pagebreak[3]
 % \section{Important notes for \LaTeX\ document class maintainers}
 %
 % If you are a maintainer of a \LaTeX\ document class and want to support this package
@@ -373,8 +430,10 @@
 % or |\Setup|\-|Float|\-|ing|\-|En|\-|vi|\-|ron|\-|ment|.
 %
 % \medskip
+%
+% \pagebreak[3]
 % Example code:
-% \begin{quote}
+% \nobreak\begin{quote}
 %   |\newcommand\@chapterlistsgap{10\p@}|\\
 %   ||\\
 %   |\newcommand\@addchapterlistsgaps{%|\\
