@@ -1,0 +1,34 @@
+% Issue #1 "do not reset aliascounter"
+% https://github.com/mark-vis/newfloat/issues/1
+%
+% \DeclareFloatingEnvironment on an alias counter (\newcounteralias,
+% LaTeX 2025-11-01 or newer) gave the warning
+% "Alias counters can not be removed from a reset".
+%
+% Expected output (no warning): the alias floats share the numbering of
+% the counter they are an alias of, including its "within" setting:
+% Graph 1.1, Diagram 1.2, Diagram 2.1, Graph 2.2;
+% references 1.1 1.2 2.1 2.2.
+
+\documentclass{book}
+\usepackage{newfloat}
+\usepackage{hyperref}
+
+\DeclareFloatingEnvironment[within=chapter]{graph}
+\newcounteralias{diagram}{graph}
+\DeclareFloatingEnvironment[within=none]{diagram}
+
+\begin{document}
+\listofgraphs
+\listofdiagrams
+
+\chapter{A}
+\begin{graph}\caption{a graph}\label{g}\end{graph}
+\begin{diagram}\caption{a diagram}\label{d}\end{diagram}
+
+\chapter{B}
+\begin{diagram}\caption{a diagram}\label{d2}\end{diagram}
+\begin{graph}\caption{a graph}\label{g2}\end{graph}
+
+References: \ref{g} \ref{d} \ref{d2} \ref{g2}.
+\end{document}

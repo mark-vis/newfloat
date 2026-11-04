@@ -20,12 +20,12 @@
 % and the derived file newfloat.sty.
 % 
 % \fi
-% \CheckSum{1665}
+% \CheckSum{1679}
 %
 % \iffalse
 %<*driver>
 \NeedsTeXFormat{LaTeX2e}[1994/12/01]
-\ProvidesFile{newfloat.drv}[2023/10/01 v1.2 This package offers a command for defining new floating environments]
+\ProvidesFile{newfloat.drv}[2026/11/04 v1.2a This package offers a command for defining new floating environments]
 \hbadness=9999 \newcount\hbadness \hfuzz=48pt % Make TeX shut up.
 %
 \documentclass{ltxdoc}
@@ -185,6 +185,12 @@
 % otherwise it is set to |off|.
 % (This option will only be available if the document class used offer
 % the usage of chapters, e.g.~the |book| or |report| document class.)
+%
+% If the counter \meta{type} is already an alias counter
+% (made with |\new|\-|counter|\-|alias|), for example to number two kinds of
+% floats together, the numbering is left to the counter it is an alias of:
+% the ``within'' setting does not change the reset or the representation
+% of such a counter. Set |within=| on the other floating environment instead.
 %
 % The list will be typeset using the command |\list|\-|of|\meta{type}|s|
 % resp.~|\list|\-|of|\meta{type}|es|,
@@ -647,7 +653,7 @@
 %
 % Identify the current version of the package.
 %    \begin{macrocode}
-\ProvidesPackage{newfloat}[2023/10/01 v1.2 Defining new floating environments (AR)]
+\ProvidesPackage{newfloat}[2026/11/04 v1.2a Defining new floating environments (AR)]
 %    \end{macrocode}
 %
 % \begin{macro}{\newfloat@Info}
@@ -733,6 +739,7 @@
 % \subsection{\cs{DeclareFloatingEnvironment}}
 %
 % \begin{macro}{\DeclareFloatingEnvironment}
+% \changes{v1.2a}{2026/11/04}{Leaves the numbering of alias counters alone now}
 % \changes{v1.0a}{2011/11/16}{Bugfix: Undefines \cs{fst@}\meta{environment} now}
 % \changes{v1.1}{2013/04/27}{Revised, only defines stuff yet undefined now}
 % \changes{v1.1}{2013/11/03}{Uses \cs{newfloat@capitalize} now}
@@ -1064,10 +1071,13 @@
 % (if counter $=$ |chapter|) or off (otherwise).
 %    \begin{macrocode}
 \newcommand*\newfloat@setwithin[2]{%
-  \ifcsname c@chapter\endcsname
-    \@removefromreset{#1}{chapter}%
-  \fi
-  \@removefromreset{#1}{section}%
+  \newfloat@ifalias{#1}%
+    {\newfloat@Info{`#1' is an alias counter, its numbering\MessageBreak
+                    is left to `\@nameuse{alias@ctr@#1}'}}%
+    {\ifcsname c@chapter\endcsname
+       \@removefromreset{#1}{chapter}%
+     \fi
+     \@removefromreset{#1}{section}}%
 %    \end{macrocode}
 %    \begin{macrocode}
   \edef\@tempa{#2}%
@@ -1083,15 +1093,15 @@
   \else
     \def\@tempb{chapter}%
     \ifx\@tempa\@tempb
-      \@addtoreset{#1}{chapter}%
+      \newfloat@addtoreset{#1}{chapter}%
       \@chapterlistsgap@on{#1}%
       \newfloat@@setwithin{#1}{\ifnum\c@chapter>\z@ \thechapter.\fi}{\theHchapter.}%
     \else
       \def\@tempb{section}%
       \ifx\@tempa\@tempb
-        \@addtoreset{#1}{section}%
+        \newfloat@addtoreset{#1}{section}%
         \ifcsname c@chapter\endcsname
-          \@addtoreset{#1}{chapter}%
+          \newfloat@addtoreset{#1}{chapter}%
           \@chapterlistsgap@on{#1}%
           \newfloat@@setwithin{#1}{\thesection.}{\theHsection.}%
         \else
@@ -1110,9 +1120,30 @@
 % e.g. ``\texttt{LaTeX Error: Command \cs{theHfigure} already defined}''.
 %    \begin{macrocode}
 \newcommand*\newfloat@@setwithin[3]{%
-  \global\@namedef{the#1}{#2\arabic{#1}}%
-  \global\@namedef{theH#1}{#3\arabic{#1}}}
+  \newfloat@ifalias{#1}{}{%
+    \global\@namedef{the#1}{#2\arabic{#1}}%
+    \global\@namedef{theH#1}{#3\arabic{#1}}}}
 %    \end{macrocode}
+%
+% \begin{macro}{\newfloat@ifalias}
+% \begin{macro}{\newfloat@addtoreset}
+% \changes{v1.2a}{2026/11/04}{These macros added}
+% |\newfloat@ifalias|\marg{counter}\marg{true}\marg{false}\par
+% |\newfloat@addtoreset|\marg{counter}\marg{within counter}\par
+% Since \LaTeX\ 2025-11-01 a counter can be an alias of another counter
+% (|\new|\-|counter|\-|alias|). Such a counter shares the value, the reset
+% list, and the representation with the counter it is an alias of, and
+% the kernel refuses (with a warning) to add it to a reset list or to
+% remove it from one. So we leave the numbering of such a counter alone.
+% (See \url{https://github.com/mark-vis/newfloat/issues/1})
+%    \begin{macrocode}
+\newcommand*\newfloat@ifalias[1]{%
+  \@ifundefined{alias@ctr@#1}\@secondoftwo\@firstoftwo}
+\newcommand*\newfloat@addtoreset[2]{%
+  \newfloat@ifalias{#1}{}{\@addtoreset{#1}{#2}}}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
 %    \begin{macrocode}
 \define@key{@newfloat}{within}{%
   \def\newfloat@within@value{#1}}
