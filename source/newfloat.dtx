@@ -20,7 +20,7 @@
 % and the derived file newfloat.sty.
 % 
 % \fi
-% \CheckSum{1734}
+% \CheckSum{1735}
 %
 % \iffalse
 %<*driver>
@@ -1313,6 +1313,10 @@
 % |\caption| gives errors when tagging is on.
 % Here we declare the new type with |\tagpdfsetup{float/new=|\meta{type}|}|
 % if that key exists, i.e.~if the float tagging code is loaded.
+% As the first aid for the \pkg{float} package does for its |\newfloat|,
+% we also give the container of the floats of this type its own tag
+% \meta{type}|-floats| (mapped to |Sect|), which gives it a nicer name in
+% the structure tree.
 % We test for the key itself and not for the name of the package
 % which offers it, so this keeps working when the code moves elsewhere.
 % We skip types which already have a structure name, e.g.~when the
@@ -1325,7 +1329,8 @@
     \csname keys_if_exist:nnTF\endcsname{__tag/setup}{float/new}%
       {\ifcsname l__tag_name_float/#1_tl\endcsname \else
          \newfloat@Info{Registering float type `#1' for tagging}%
-         \tagpdfsetup{float/new={#1}}%
+         \tagpdfsetup{float/new={#1},role/new-tag={#1-floats/Sect}}%
+         \AssignStructureRole{float/#1s}{#1-floats}%
        \fi}%
       {}%
   \fi}
