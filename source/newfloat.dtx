@@ -20,12 +20,12 @@
 % and the derived file newfloat.sty.
 % 
 % \fi
-% \CheckSum{1665}
+% \CheckSum{1734}
 %
 % \iffalse
 %<*driver>
 \NeedsTeXFormat{LaTeX2e}[1994/12/01]
-\ProvidesFile{newfloat.drv}[2023/10/01 v1.2 This package offers a command for defining new floating environments]
+\ProvidesFile{newfloat.drv}[2026/11/04 v1.2a This package offers a command for defining new floating environments]
 \hbadness=9999 \newcount\hbadness \hfuzz=48pt % Make TeX shut up.
 %
 \documentclass{ltxdoc}
@@ -185,6 +185,21 @@
 % otherwise it is set to |off|.
 % (This option will only be available if the document class used offer
 % the usage of chapters, e.g.~the |book| or |report| document class.)
+%
+% If the counter \meta{type} is already an alias counter
+% (made with |\new|\-|counter|\-|alias|, \LaTeX\ 2025-11-01 or newer),
+% for example to number two kinds of floats together, the numbering is
+% left to the counter it is an alias of:
+% the ``within'' setting does not change the reset or the representation
+% of such a counter; set it for that counter instead (e.g.~with |within=|
+% on the other floating environment). The chapters lists gap of the
+% alias float follows that counter at the time of the declaration:
+% it is switched on if that counter is reset by |chapter|.
+% (Use |chapterlistsgaps=| to change it.)
+%
+% If the document uses tagging (|\DocumentMetadata{tagging=on}|), the new
+% floating environment is also declared as a float type for tagging, so
+% that its floats and captions are tagged like those of |figure| and |table|.
 %
 % The list will be typeset using the command |\list|\-|of|\meta{type}|s|
 % resp.~|\list|\-|of|\meta{type}|es|,
@@ -647,7 +662,7 @@
 %
 % Identify the current version of the package.
 %    \begin{macrocode}
-\ProvidesPackage{newfloat}[2023/10/01 v1.2 Defining new floating environments (AR)]
+\ProvidesPackage{newfloat}[2026/11/04 v1.2a Defining new floating environments (AR)]
 %    \end{macrocode}
 %
 % \begin{macro}{\newfloat@Info}
@@ -1058,12 +1073,28 @@
 % \end{macro}
 %
 % \begin{macro}{\newfloat@setwithin}
+% \changes{v1.2a}{2026/11/04}{Leaves the numbering of alias counters alone now}
 % |\newfloat@setwithin|\marg{environment}\marg{counter}\par
 % setup the counter for working ``within'' a given counter.
 % Furthermore the chapters lists gap will be switched on
 % (if counter $=$ |chapter|) or off (otherwise).
+%
+% Since \LaTeX\ 2025-11-01 a counter can be an alias of another counter
+% (|\new|\-|counter|\-|alias|). Such a counter shares the value, the reset
+% list, and the representation with the counter it is an alias of (its
+% ``root''), and the kernel refuses (with a warning) to add it to a reset
+% list or to remove it from one. So we leave the numbering of such a
+% counter alone, and only switch the chapters lists gap on or off,
+% depending on whether the root is reset by |chapter| at this moment.
+% (See \url{https://github.com/mark-vis/newfloat/issues/1})
 %    \begin{macrocode}
 \newcommand*\newfloat@setwithin[2]{%
+  \newfloat@ifalias{#1}%
+    {\newfloat@setwithin@alias{#1}}%
+    {\newfloat@setwithin@{#1}{#2}}}
+%    \end{macrocode}
+%    \begin{macrocode}
+\newcommand*\newfloat@setwithin@[2]{%
   \ifcsname c@chapter\endcsname
     \@removefromreset{#1}{chapter}%
   \fi
@@ -1113,6 +1144,48 @@
   \global\@namedef{the#1}{#2\arabic{#1}}%
   \global\@namedef{theH#1}{#3\arabic{#1}}}
 %    \end{macrocode}
+%
+% \begin{macro}{\newfloat@ifalias}
+% \begin{macro}{\newfloat@setwithin@alias}
+% \begin{macro}{\newfloat@ifreset}
+% \changes{v1.2a}{2026/11/04}{These macros added}
+% |\newfloat@ifalias|\marg{counter}\marg{true}\marg{false}\par
+% |\newfloat@setwithin@alias|\marg{environment}\par
+% |\newfloat@ifreset|\marg{counter}\marg{within counter}\marg{true}\marg{false}\par
+% (|\newfloat@ifreset| tests if \meta{counter} is in the reset list
+% of \meta{within counter}.)
+%    \begin{macrocode}
+\newcommand*\newfloat@ifalias[1]{%
+  \@ifundefined{alias@ctr@#1}\@secondoftwo\@firstoftwo}
+%    \end{macrocode}
+%    \begin{macrocode}
+\newcommand*\newfloat@setwithin@alias[1]{%
+  \edef\@tempa{\@kernel@get@ctr@root{#1}}%
+  \newfloat@Info{`#1' is an alias of the counter `\@tempa',\MessageBreak
+                 so its numbering is left to `\@tempa'}%
+  \ifcsname c@chapter\endcsname
+    \expandafter\newfloat@ifreset\expandafter{\@tempa}{chapter}%
+      {\@chapterlistsgap@on{#1}}%
+      {\@chapterlistsgap@off{#1}}%
+  \fi}
+%    \end{macrocode}
+%    \begin{macrocode}
+\newcommand*\newfloat@ifreset[2]{%
+  \begingroup
+    \def\@tempa{#1}%
+    \global\let\newfloat@ifreset@result\@secondoftwo
+    \def\@elt##1{%
+      \def\@tempb{##1}%
+      \ifx\@tempa\@tempb
+        \global\let\newfloat@ifreset@result\@firstoftwo
+      \fi}%
+    \csname cl@#2\endcsname
+  \endgroup
+  \newfloat@ifreset@result}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
 %    \begin{macrocode}
 \define@key{@newfloat}{within}{%
   \def\newfloat@within@value{#1}}
@@ -1182,6 +1255,7 @@
 % \end{macro}
 %
 % \begin{macro}{\newfloat@announce}
+% \changes{v1.2a}{2026/11/04}{Registers the new float type for tagging now}
 % \changes{v1.1n}{2021/02/27}{Defines \cs{newfloat@env@xxx} now instead of \cs{newfloat@ext@xxx}}
 % |\newfloat@announce|\marg{environment name}\marg{list file extension}
 %    \begin{macrocode}
@@ -1219,9 +1293,43 @@
     \contentsuse{#1}{#2}%
   \fi
 %    \end{macrocode}
+% Register the new float type for tagged PDF (see below)
+%    \begin{macrocode}
+  \newfloat@tagging@register{#1}%
+%    \end{macrocode}
 %    \begin{macrocode}
   \newfloat@hook{#1}}
 \@onlypreamble\newfloat@announce
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\newfloat@tagging@register}
+% \changes{v1.2a}{2026/11/04}{This macro added}
+% |\newfloat@tagging@register|\marg{environment}\par
+% With |\DocumentMetadata| the float code of \LaTeX's tagging support
+% (currently \pkg{latex-lab-testphase-float}) only knows the float types
+% |figure| and |table|. Floats of other types get a generic structure, and
+% their captions refer to structure names which do not exist, so every
+% |\caption| gives errors when tagging is on.
+% Here we declare the new type with |\tagpdfsetup{float/new=|\meta{type}|}|
+% if that key exists, i.e.~if the float tagging code is loaded.
+% We test for the key itself and not for the name of the package
+% which offers it, so this keeps working when the code moves elsewhere.
+% We skip types which already have a structure name, e.g.~when the
+% document did |\tagpdfsetup{float/new=|\meta{type}|}| itself, because
+% versions of \pkg{latex-lab-testphase-float} before 2026-09-09 give an
+% error then.
+%    \begin{macrocode}
+\newcommand*\newfloat@tagging@register[1]{%
+  \ifcsname keys_if_exist:nnTF\endcsname
+    \csname keys_if_exist:nnTF\endcsname{__tag/setup}{float/new}%
+      {\ifcsname l__tag_name_float/#1_tl\endcsname \else
+         \newfloat@Info{Registering float type `#1' for tagging}%
+         \tagpdfsetup{float/new={#1}}%
+       \fi}%
+      {}%
+  \fi}
+\@onlypreamble\newfloat@tagging@register
 %    \end{macrocode}
 % \end{macro}
 %
