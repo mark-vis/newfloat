@@ -1,0 +1,29 @@
+% Floating environments defined with \DeclareFloatingEnvironment are
+% registered for tagging (\tagpdfsetup{float/new=<type>}), so their
+% captions get a Caption structure with a Lbl inside.
+% Without this every \caption in a "graph" gave errors
+% ("Undefined control sequence" \l__tag_name_float/graph/caption_tl).
+%
+% Expected output: no errors; "pdfinfo -struct-text tagging.pdf" shows
+% two Caption structures (graph and figure), each with a Lbl.
+
+\DocumentMetadata{tagging=on}
+\documentclass{article}
+\usepackage{newfloat}
+\DeclareFloatingEnvironment{graph}
+
+\begin{document}
+\listofgraphs
+
+\begin{graph}
+  \centering G
+  \caption{A graph}\label{g}
+\end{graph}
+
+\begin{figure}
+  \centering F
+  \caption{A figure}
+\end{figure}
+
+See graph~\ref{g}.
+\end{document}
